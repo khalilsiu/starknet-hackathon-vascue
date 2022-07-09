@@ -10,12 +10,12 @@ from starkware.starknet.common.syscalls import get_caller_address
 
 # Mapping for doctor address
 @storage_var
-func doctor_ids(doctor_id : felt) -> (address : felt):
+func doctor_ids(address : felt) -> (doctor_id : felt):
 end
 
 # Mapping for nurse address
 @storage_var
-func nurse_ids(nurse_id : felt) -> (address : felt):
+func nurse_ids(address : felt) -> (nurse_id : felt):
 end
 
 # Hashes of the followings for prescription log at some id
@@ -47,17 +47,17 @@ end
 #
 
 @view
-func get_doctor_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        doctor_id : felt) -> (address : felt):
-    let (address) = doctor_ids.read(doctor_id=doctor_id)
-    return (address=address)
+func get_doctor_id{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        address : felt) -> (doctor_id : felt):
+    let (doctor_id) = doctor_ids.read(address=address)
+    return (doctor_id=doctor_id)
 end
 
 @view
 func get_nurse_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        nurse_id : felt) -> (address : felt):
-    let (address) = nurse_ids.read(nurse_id=nurse_id)
-    return (address=address)
+        address : felt) -> (nurse_id : felt):
+    let (nurse_id) = nurse_ids.read(address=address)
+    return (nurse_id=nurse_id)
 end
 
 @view
