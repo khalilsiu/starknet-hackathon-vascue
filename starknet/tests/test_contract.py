@@ -5,7 +5,7 @@ import pytest
 import asyncio
 from starkware.starknet.testing.starknet import Starknet, StarknetContract
 from starkware.starkware_utils.error_handling import StarkException
-from utils import Signer
+from utils import MockSigner
 
 
 some_doctor_id = 1
@@ -13,7 +13,7 @@ some_nurse_id = 1
 
 @dataclass
 class Account:
-    signer: Signer
+    signer: MockSigner
     contract: StarknetContract
 
 
@@ -26,14 +26,14 @@ def event_loop():
 @pytest.fixture(scope="module")
 async def contract_factory() -> Tuple[Starknet, Account, Account, StarknetContract]:
     starknet = await Starknet.empty()
-    some_signer = Signer(private_key=12345)
+    some_signer = MockSigner(private_key=12345)
     owner_account = Account(
         signer=some_signer,
         contract=await starknet.deploy(
             "contracts/Account.cairo", constructor_calldata=[some_signer.public_key]
         ),
     )
-    some_other_signer = Signer(private_key=123456789)
+    some_other_signer = MockSigner(private_key=123456789)
     doctor_account = Account(
         signer=some_other_signer,
         contract=await starknet.deploy(
@@ -42,9 +42,6 @@ async def contract_factory() -> Tuple[Starknet, Account, Account, StarknetContra
         ),
     )
     contract = await starknet.deploy("contracts/contract.cairo", constructor_calldata=[owner_account.contract.contract_address])
-    owner = await contract.get_owner().call()
-    print("OWNER AHHHHHHHHHHHHHHH")
-    print(owner)
     return starknet, owner_account, doctor_account, contract
 
 
