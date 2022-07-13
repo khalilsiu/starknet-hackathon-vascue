@@ -5,6 +5,15 @@ from starkware.cairo.common.math import assert_not_zero
 from starkware.starknet.common.syscalls import get_caller_address
 
 #
+# Struct
+#
+
+struct DrugAdministrationLog:
+    member prescription_id: felt
+    member log_hash: felt
+end
+
+#
 # Storage
 #
 
@@ -44,7 +53,7 @@ end
 # - unit_id (e.g. pill, ml, etc.)
 # - route_id (e.g. oral, iv, etc.)
 @storage_var
-func drug_administration_log(drug_administration_id : felt) -> (log_hash : felt):
+func drug_administration_log(drug_administration_id : felt) -> (log : DrugAdministrationLog):
 end
 
 @constructor
@@ -94,9 +103,9 @@ end
 
 @view
 func get_drug_administration_log{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        drug_administration_id : felt) -> (log_hash : felt):
-    let (log_hash) = drug_administration_log.read(drug_administration_id=drug_administration_id)
-    return (log_hash=log_hash)
+        drug_administration_id : felt) -> (drug_administration_log : DrugAdministrationLog):
+    let (log) = drug_administration_log.read(drug_administration_id=drug_administration_id)
+    return (drug_administration_log=log)
 end
 
 # (https://github.com/starkware-libs/cairo-lang/blob/master/src/starkware/cairo/common/keccak.cairo)
@@ -112,7 +121,7 @@ end
 @view
 func verify_drug_administration_log{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         drug_administration_id : felt, prescription_id : felt, case_id : felt, nurse_id : felt, drug_id : felt, quantity : felt, unit_id : felt, route_id : felt) -> (result : felt):
-    let (log_hash) = drug_administration_log.read(drug_administration_id=drug_administration_id)
+    let (log) = drug_administration_log.read(drug_administration_id=drug_administration_id)
     # TODO : compute SHA256 hash and compare to log_hash
     return (result=1)
 end
@@ -154,24 +163,47 @@ func register_nurse{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
     return ()
 end
 
-# # Vehicle signers can attest to a state hash -- data storage & verification off-chain
-# @external
-# func attest_prescription_log_state{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-#         vehicle_id : felt, state_id : felt, state_hash : felt):
-#     # Verify the vehicle has been registered & the caller is the signer
-#     let (signer_address) = vehicle_signer_address.read(vehicle_id=vehicle_id)
-#     let (caller) = get_caller_address()
-#     assert_not_zero(caller)
-#     assert signer_address = caller
+# Doctor can attest to a prescription log hash
+@external
+func attest_prescription_log{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        prescription_id : felt, log_hash : felt):
+    # Verify caller is a doctor
+    onlyDoctor()
 
-#     # Make sure a unique state id was used
-#     let (state) = vehicle_state.read(vehicle_id=vehicle_id, state_id=state_id)
-#     assert state = 0
+    # Make sure a unique prescription id was used
+    let (log) = prescription_log.read(prescription_id=prescription_id)
+    assert log = 0
 
-#     # Register state
-#     vehicle_state.write(vehicle_id=vehicle_id, state_id=state_id, value=state_hash)
-#     return ()
-# end
+    # Register log
+    prescription_log.write(prescription_id=prescription_id, value=log_hash)
+    return ()
+end
+
+# Both doctors and nurses can attest to a drug administration log hash
+@external
+func attest_drug_administration_log{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        drug_administration_id : felt, prescription_id : felt, log_hash : felt):
+    # Verify caller is a doctor or a nurse
+    onlyHealthcareProviders()
+
+    # Make sure the prescription id was recorded
+    let (log1) = prescription_log.read(prescription_id=prescription_id)
+    assert_not_zero(log1)
+
+    # Make sure a unique drug administration id was used
+    let (log) = drug_administration_log.read(drug_administration_id=drug_administration_id)
+    assert log = DrugAdministrationLog(prescription_id=0, log_hash=0)
+
+    # Register log
+    drug_administration_log.write(
+        drug_administration_id=drug_administration_id,
+        value=DrugAdministrationLog(
+            prescription_id=prescription_id,
+            log_hash=log_hash
+        )
+    )
+    return ()
+end
 
 # Check if caller is owner
 func onlyOwner{

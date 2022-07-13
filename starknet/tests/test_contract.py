@@ -53,9 +53,160 @@ async def contract_factory() -> Tuple[Starknet, Account, Account, StarknetContra
     return starknet, owner_account, doctor_account, nurse_account, contract
 
 
+# @pytest.mark.asyncio
+# async def test_register_doctor_by_owner(contract_factory):
+#     """Owner should be able to register doctor address to a given id"""
+#     _, owner_account, doctor_account, _, contract = contract_factory
+
+#     await owner_account.signer.send_transaction(
+#         account=owner_account.contract,
+#         to=contract.contract_address,
+#         selector_name="register_doctor",
+#         calldata=[some_doctor_id, doctor_account.contract.contract_address],
+#     )
+
+#     # Check the owner is registered
+#     observed_doctor = await contract.get_doctor_id(address=doctor_account.contract.contract_address).call()
+#     assert observed_doctor.result == (some_doctor_id,)
+
+# @pytest.mark.asyncio
+# async def test_register_doctor_by_nurse(contract_factory):
+#     """Non-Owner should not be able to register doctor address to a given id"""
+#     _, _, doctor_account, nurse_account, contract = contract_factory
+
+#     with pytest.raises(StarkException):
+#         await nurse_account.signer.send_transaction(
+#             account=nurse_account.contract,
+#             to=contract.contract_address,
+#             selector_name="register_doctor",
+#             calldata=[some_doctor_id, doctor_account.contract.contract_address],
+#         )
+
+#     # Check the owner is registered
+#     observed_doctor = await contract.get_doctor_id(address=doctor_account.contract.contract_address).call()
+#     assert observed_doctor.result == (some_doctor_id,)
+
+# @pytest.mark.asyncio
+# async def test_register_nurse_by_owner(contract_factory):
+#     """Owner should be able to register nurse address to a given id"""
+#     _, owner_account, _, nurse_account, contract = contract_factory
+
+#     await owner_account.signer.send_transaction(
+#         account=owner_account.contract,
+#         to=contract.contract_address,
+#         selector_name="register_nurse",
+#         calldata=[some_nurse_id, nurse_account.contract.contract_address],
+#     )
+
+#     # Check the owner is registered
+#     observed_nurse = await contract.get_nurse_id(address=nurse_account.contract.contract_address).call()
+#     assert observed_nurse.result == (some_nurse_id,)
+
+# @pytest.mark.asyncio
+# async def test_register_nurse_by_doctor(contract_factory):
+#     """Non-Owner should not be able to register nurse address to a given id"""
+#     _, _, doctor_account, nurse_account, contract = contract_factory
+
+#     with pytest.raises(StarkException):
+#         await doctor_account.signer.send_transaction(
+#             account=doctor_account.contract,
+#             to=contract.contract_address,
+#             selector_name="register_nurse",
+#             calldata=[some_nurse_id, nurse_account.contract.contract_address],
+#         )
+
+#     # Check the owner is registered
+#     observed_nurse = await contract.get_nurse_id(address=nurse_account.contract.contract_address).call()
+#     assert observed_nurse.result == (some_nurse_id,)
+
+
+# @pytest.mark.asyncio
+# async def test_attest_prescription_log(contract_factory):
+#     """Doctor Should successfully attest to a prescription log"""
+#     _, owner_account, doctor_account, _, contract = contract_factory
+
+#     await owner_account.signer.send_transaction(
+#         account=owner_account.contract,
+#         to=contract.contract_address,
+#         selector_name="register_doctor",
+#         calldata=[some_doctor_id, doctor_account.contract.contract_address],
+#     )
+
+#     prescription_id = 1
+#     log_hash = 1234
+#     observed_log = await contract.get_prescription_log(
+#         prescription_id=prescription_id
+#     ).call()
+#     print("observed_log AHHHHH")
+#     print(observed_log)
+#     await doctor_account.signer.send_transaction(
+#         account=doctor_account.contract,
+#         to=contract.contract_address,
+#         selector_name="attest_prescription_log",
+#         calldata=[prescription_id, log_hash],
+#     )
+
+#     # Check the state hash was committed
+#     observed_log = await contract.get_prescription_log(
+#         prescription_id=prescription_id
+#     ).call()
+#     assert observed_log.result == (log_hash,)
+
+# @pytest.mark.asyncio
+# async def test_attest_prescription_log_with_duplicate_id(contract_factory):
+#     """Should fail with a duplicate prescription id"""
+#     _, owner_account, doctor_account, _, contract = contract_factory
+
+#     await owner_account.signer.send_transaction(
+#         account=owner_account.contract,
+#         to=contract.contract_address,
+#         selector_name="register_doctor",
+#         calldata=[some_doctor_id, doctor_account.contract.contract_address],
+#     )
+
+#     prescription_id = 1
+#     log_hash = 1234
+
+#     with pytest.raises(StarkException):
+#         await doctor_account.signer.send_transaction(
+#             account=doctor_account.contract,
+#             to=contract.contract_address,
+#             selector_name="attest_prescription_log",
+#             calldata=[prescription_id, log_hash],
+#         )
+
+
+# @pytest.mark.asyncio
+# async def test_attest_prescription_log_with_nurse_account(contract_factory):
+#     """Should fail when attesting prescription log from nurse instead of doctor"""
+#     _, _, _, nurse_account, contract = contract_factory
+
+#     prescription_id = 2
+#     log_hash = 1234
+#     with pytest.raises(StarkException):
+#         await nurse_account.signer.send_transaction(
+#             account=nurse_account.contract,
+#             to=contract.contract_address,
+#             selector_name="attest_prescription_log",
+#             calldata=[prescription_id, log_hash],
+#         )
+
+
+# @pytest.mark.asyncio
+# async def test_attest_prescription_log_no_account(contract_factory):
+#     """Should fail to commit prescription log if no account signed the tx"""
+#     _, _, _, _, contract = contract_factory
+
+#     with pytest.raises(StarkException):
+#         # Transaction not sent through an account
+#         await contract.attest_prescription_log(
+#             prescription_id=5,
+#             log_hash=4567,
+#         ).invoke()
+
 @pytest.mark.asyncio
-async def test_register_doctor_by_owner(contract_factory):
-    """Owner should be able to register doctor address to a given id"""
+async def test_attest_prescription_log(contract_factory):
+    """Doctor Should successfully attest to a prescription log"""
     _, owner_account, doctor_account, _, contract = contract_factory
 
     await owner_account.signer.send_transaction(
@@ -65,146 +216,77 @@ async def test_register_doctor_by_owner(contract_factory):
         calldata=[some_doctor_id, doctor_account.contract.contract_address],
     )
 
-    # Check the owner is registered
-    observed_doctor = await contract.get_doctor_id(address=doctor_account.contract.contract_address).call()
-    assert observed_doctor.result == (some_doctor_id,)
+    prescription_id = 1
+    log_hash = 1234
+    observed_log = await contract.get_prescription_log(
+        prescription_id=prescription_id
+    ).call()
+    print("observed_log AHHHHH")
+    print(observed_log)
+    await doctor_account.signer.send_transaction(
+        account=doctor_account.contract,
+        to=contract.contract_address,
+        selector_name="attest_prescription_log",
+        calldata=[prescription_id, log_hash],
+    )
+
+    # Check the state hash was committed
+    observed_log = await contract.get_prescription_log(
+        prescription_id=prescription_id
+    ).call()
+    assert observed_log.result == (log_hash,)
 
 @pytest.mark.asyncio
-async def test_register_doctor_by_nurse(contract_factory):
-    """Non-Owner should not be able to register doctor address to a given id"""
-    _, _, doctor_account, nurse_account, contract = contract_factory
-
-    with pytest.raises(StarkException):
-        await nurse_account.signer.send_transaction(
-            account=nurse_account.contract,
-            to=contract.contract_address,
-            selector_name="register_doctor",
-            calldata=[some_doctor_id, doctor_account.contract.contract_address],
-        )
-
-    # Check the owner is registered
-    observed_doctor = await contract.get_doctor_id(address=doctor_account.contract.contract_address).call()
-    assert observed_doctor.result == (some_doctor_id,)
-
-@pytest.mark.asyncio
-async def test_register_nurse_by_owner(contract_factory):
-    """Owner should be able to register nurse address to a given id"""
-    _, owner_account, _, nurse_account, contract = contract_factory
+async def test_attest_prescription_log_with_duplicate_id(contract_factory):
+    """Should fail with a duplicate prescription id"""
+    _, owner_account, doctor_account, _, contract = contract_factory
 
     await owner_account.signer.send_transaction(
         account=owner_account.contract,
         to=contract.contract_address,
-        selector_name="register_nurse",
-        calldata=[some_nurse_id, nurse_account.contract.contract_address],
+        selector_name="register_doctor",
+        calldata=[some_doctor_id, doctor_account.contract.contract_address],
     )
 
-    # Check the owner is registered
-    observed_nurse = await contract.get_nurse_id(address=nurse_account.contract.contract_address).call()
-    assert observed_nurse.result == (some_nurse_id,)
-
-@pytest.mark.asyncio
-async def test_register_nurse_by_doctor(contract_factory):
-    """Non-Owner should not be able to register nurse address to a given id"""
-    _, _, doctor_account, nurse_account, contract = contract_factory
+    prescription_id = 1
+    log_hash = 1234
 
     with pytest.raises(StarkException):
         await doctor_account.signer.send_transaction(
             account=doctor_account.contract,
             to=contract.contract_address,
-            selector_name="register_nurse",
-            calldata=[some_nurse_id, nurse_account.contract.contract_address],
+            selector_name="attest_prescription_log",
+            calldata=[prescription_id, log_hash],
         )
 
-    # Check the owner is registered
-    observed_nurse = await contract.get_nurse_id(address=nurse_account.contract.contract_address).call()
-    assert observed_nurse.result == (some_nurse_id,)
+
+@pytest.mark.asyncio
+async def test_attest_prescription_log_with_nurse_account(contract_factory):
+    """Should fail when attesting prescription log from nurse instead of doctor"""
+    _, _, _, nurse_account, contract = contract_factory
+
+    prescription_id = 2
+    log_hash = 1234
+    with pytest.raises(StarkException):
+        await nurse_account.signer.send_transaction(
+            account=nurse_account.contract,
+            to=contract.contract_address,
+            selector_name="attest_prescription_log",
+            calldata=[prescription_id, log_hash],
+        )
 
 
-# @pytest.mark.asyncio
-# async def test_register_vehicle_again(contract_factory):
-#     """Should fail to register a vehicle a second time"""
-#     _, owner_account, doctor_account, contract = contract_factory
+@pytest.mark.asyncio
+async def test_attest_prescription_log_no_account(contract_factory):
+    """Should fail to commit prescription log if no account signed the tx"""
+    _, _, _, _, contract = contract_factory
 
-#     with pytest.raises(StarkException):
-#         await doctor_account.signer.send_transaction(
-#             account=doctor_account.contract,
-#             to=contract.contract_address,
-#             selector_name="register_vehicle",
-#             calldata=[some_vehicle, doctor_account.contract.contract_address],
-#         )
-
-#     # Check the original owner is still registered
-#     observed_registrant = await contract.get_owner(vehicle_id=some_vehicle).call()
-#     assert observed_registrant.result == (owner_account.contract.contract_address,)
-
-
-# @pytest.mark.asyncio
-# async def test_attest_state_unregistered_vehicle(contract_factory):
-#     """Should fail with an unregistered vehicle"""
-#     _, _, doctor_account, contract = contract_factory
-
-#     state_id = 1
-#     state_hash = 1234
-#     some_unregistered_vehicle = 5
-#     with pytest.raises(StarkException):
-#         await doctor_account.signer.send_transaction(
-#             doctor_account.contract,
-#             contract.contract_address,
-#             "attest_state",
-#             [some_unregistered_vehicle, state_id, state_hash],
-#         )
-
-
-# @pytest.mark.asyncio
-# async def test_attest_state_invalid_account(contract_factory):
-#     """Should fail when attesting from owner instead of signer"""
-#     _, owner_account, _, contract = contract_factory
-
-#     state_id = 1
-#     state_hash = 1234
-#     with pytest.raises(StarkException):
-#         # Attest with owner rather than delegate signer
-#         await owner_account.signer.send_transaction(
-#             account=owner_account.contract,
-#             to=contract.contract_address,
-#             selector_name="attest_state",
-#             calldata=[some_vehicle, state_id, state_hash],
-#         )
-
-
-# @pytest.mark.asyncio
-# async def test_attest_state_no_account(contract_factory):
-#     """Should fail to commit state if no account signed the tx"""
-#     _, _, _, contract = contract_factory
-
-#     with pytest.raises(StarkException):
-#         # Transaction not sent through an account
-#         await contract.attest_state(
-#             vehicle_id=some_vehicle,
-#             state_id=5,
-#             state_hash=4567,
-#         ).invoke()
-
-
-# @pytest.mark.asyncio
-# async def test_attest_state(contract_factory):
-#     """Should successfully attest to a state hash"""
-#     _, _, doctor_account, contract = contract_factory
-
-#     state_id = 1
-#     state_hash = 1234
-#     await doctor_account.signer.send_transaction(
-#         account=doctor_account.contract,
-#         to=contract.contract_address,
-#         selector_name="attest_state",
-#         calldata=[some_vehicle, state_id, state_hash],
-#     )
-
-#     # Check the state hash was committed
-#     observed_state = await contract.get_state(
-#         vehicle_id=some_vehicle, state_id=state_id
-#     ).call()
-#     assert observed_state.result == (state_hash,)
+    with pytest.raises(StarkException):
+        # Transaction not sent through an account
+        await contract.attest_prescription_log(
+            prescription_id=5,
+            log_hash=4567,
+        ).invoke()
 
 
 # @pytest.mark.asyncio
