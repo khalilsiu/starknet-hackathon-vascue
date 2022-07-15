@@ -115,8 +115,7 @@ func get_drug_administration_log{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
     return (drug_administration_log=log)
 end
 
-# (https://github.com/starkware-libs/cairo-lang/blob/master/src/starkware/cairo/common/keccak.cairo)
-# (https://github.com/starkware-libs/cairo-examples/blob/master/sha256/sha256.cairo)
+# (Courtesy: https://github.com/starkware-libs/cairo-examples/blob/master/sha256)
 # prescription_id : felt, case_id : felt, doctor_id : felt, drug_id : felt, quantity : felt, unit_id : felt, frequency : felt, route_id : felt
 @view
 func verify_prescription_log{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr, bitwise_ptr : BitwiseBuiltin*}(
