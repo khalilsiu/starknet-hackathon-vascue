@@ -1,2 +1,5 @@
 artifacts/*
 tests/__pycache__/*
+.env
+env/
+localhost*

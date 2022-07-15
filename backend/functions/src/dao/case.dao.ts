@@ -1,0 +1,56 @@
+import { DocumentData, Query, WhereFilterOp } from "@google-cloud/firestore";
+import { Service } from "typedi";
+import { nanoid } from "nanoid";
+import { db } from "../firestore";
+import { CaseDto } from "../dto";
+
+@Service()
+export class CaseDao {
+  private static COLLECTION_NAME = "cases";
+
+  public create = async (
+    caseDto: CaseDto,
+    id?: string
+  ): Promise<string | null> => {
+    const docId = id ?? nanoid();
+    const caseRef = db.collection(CaseDao.COLLECTION_NAME).doc(docId);
+    const request = await caseRef.set({
+      ...caseDto,
+      createdAt: Date.now(),
+    });
+
+    return request?.writeTime ? docId : null;
+  };
+
+  public getById = async (id: string): Promise<Case | null> => {
+    const doc = await db.collection(CaseDao.COLLECTION_NAME).doc(id).get();
+
+    return doc.exists && doc.data() ? (doc.data() as Case) : null;
+  };
+
+  public getAll = async (
+    conditions: [keyof Case, WhereFilterOp, string | number][] = []
+  ): Promise<Case[]> => {
+    const caseRef = db.collection(`${CaseDao.COLLECTION_NAME}`);
+
+    const caseQuery = conditions.reduce(
+      (acc: Query<DocumentData>, condition) =>
+        acc.where(condition[0] as string, condition[1], condition[2]),
+      caseRef
+    );
+
+    const caseSnapshot = await caseQuery.get();
+
+    if (caseSnapshot.empty) {
+      return [];
+    }
+
+    const cases: Case[] = [];
+
+    caseSnapshot.docs.forEach((doc) => {
+      cases.push({ id: doc.id, ...doc.data() } as Case);
+    });
+
+    return cases;
+  };
+}
