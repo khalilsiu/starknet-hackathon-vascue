@@ -133,20 +133,21 @@ async def test_attest_prescription_log(contract_factory):
     )
 
     prescription_id = 1
-    log_hash = 1234
+    hash_1 = 1234
+    hash_2 = 5678
 
     await doctor_account.signer.send_transaction(
         account=doctor_account.contract,
         to=contract.contract_address,
         selector_name="attest_prescription_log",
-        calldata=[prescription_id, log_hash],
+        calldata=[prescription_id, hash_1, hash_2],
     )
 
     # Check the state hash was committed
     observed_log = await contract.get_prescription_log(
         prescription_id=prescription_id
     ).call()
-    assert observed_log.result == (log_hash,)
+    assert observed_log.result == ((hash_1, hash_2),)
 
 
 @pytest.mark.asyncio
@@ -162,13 +163,14 @@ async def test_attest_prescription_log_with_duplicate_id(contract_factory):
     )
 
     prescription_id = 4
-    log_hash = 1234
+    hash_1 = 1234
+    hash_2 = 5678
 
     await doctor_account.signer.send_transaction(
         account=doctor_account.contract,
         to=contract.contract_address,
         selector_name="attest_prescription_log",
-        calldata=[prescription_id, log_hash],
+        calldata=[prescription_id, hash_1, hash_2],
     )
 
     with pytest.raises(StarkException):
@@ -176,7 +178,7 @@ async def test_attest_prescription_log_with_duplicate_id(contract_factory):
             account=doctor_account.contract,
             to=contract.contract_address,
             selector_name="attest_prescription_log",
-            calldata=[prescription_id, log_hash],
+            calldata=[prescription_id, hash_1, hash_2],
         )
 
 
@@ -186,13 +188,14 @@ async def test_attest_prescription_log_with_nurse_account(contract_factory):
     _, _, _, nurse_account, contract = contract_factory
 
     prescription_id = 2
-    log_hash = 1234
+    hash_1 = 1234
+    hash_2 = 5678
     with pytest.raises(StarkException):
         await nurse_account.signer.send_transaction(
             account=nurse_account.contract,
             to=contract.contract_address,
             selector_name="attest_prescription_log",
-            calldata=[prescription_id, log_hash],
+            calldata=[prescription_id, hash_1, hash_2],
         )
 
 
@@ -205,7 +208,8 @@ async def test_attest_prescription_log_no_account(contract_factory):
         # Transaction not sent through an account
         await contract.attest_prescription_log(
             prescription_id=5,
-            log_hash=4567,
+            hash_1=4567,
+            hash_2=8901,
         ).invoke()
 
 
@@ -223,14 +227,15 @@ async def test_attest_drug_administration_log_with_unlogged_prescription_id(cont
 
     prescription_id = 100
     drug_administration_id = 1
-    drug_administration_log_hash = 14567
+    drug_administration_hash_1 = 14567
+    drug_administration_hash_2 = 28901
 
     with pytest.raises(StarkException):
         await doctor_account.signer.send_transaction(
             account=doctor_account.contract,
             to=contract.contract_address,
             selector_name="attest_drug_administration_log",
-            calldata=[drug_administration_id, prescription_id, drug_administration_log_hash],
+            calldata=[drug_administration_id, prescription_id, drug_administration_hash_1, drug_administration_hash_2],
         )
 
 @pytest.mark.asyncio
@@ -247,21 +252,23 @@ async def test_attest_drug_administration_log_with_duplicate_id(contract_factory
 
     prescription_id = 101
     drug_administration_id = 1
-    prescription_log_hash = 1234
-    drug_administration_log_hash = 14567
+    prescription_hash_1 = 1234
+    prescription_hash_2 = 5678
+    drug_administration_hash_1 = 14567
+    drug_administration_hash_2 = 28901
 
     await doctor_account.signer.send_transaction(
         account=doctor_account.contract,
         to=contract.contract_address,
         selector_name="attest_prescription_log",
-        calldata=[prescription_id, prescription_log_hash],
+        calldata=[prescription_id, prescription_hash_1, prescription_hash_2],
     )
 
     await doctor_account.signer.send_transaction(
         account=doctor_account.contract,
         to=contract.contract_address,
         selector_name="attest_drug_administration_log",
-        calldata=[drug_administration_id, prescription_id, drug_administration_log_hash],
+        calldata=[drug_administration_id, prescription_id, drug_administration_hash_1, drug_administration_hash_2],
     )
 
     with pytest.raises(StarkException):
@@ -269,7 +276,7 @@ async def test_attest_drug_administration_log_with_duplicate_id(contract_factory
             account=doctor_account.contract,
             to=contract.contract_address,
             selector_name="attest_drug_administration_log",
-            calldata=[drug_administration_id, prescription_id, drug_administration_log_hash],
+            calldata=[drug_administration_id, prescription_id, drug_administration_hash_1, drug_administration_hash_2],
         )
 
 @pytest.mark.asyncio
@@ -286,28 +293,30 @@ async def test_doctor_attest_drug_administration_log(contract_factory):
 
     prescription_id = 5
     drug_administration_id = 2
-    prescription_log_hash = 1234
-    drug_administration_log_hash = 14567
+    prescription_hash_1 = 1234
+    prescription_hash_2 = 5678
+    drug_administration_hash_1 = 14567
+    drug_administration_hash_2 = 28901
 
     await doctor_account.signer.send_transaction(
         account=doctor_account.contract,
         to=contract.contract_address,
         selector_name="attest_prescription_log",
-        calldata=[prescription_id, prescription_log_hash],
+        calldata=[prescription_id, prescription_hash_1, prescription_hash_2],
     )
 
     await doctor_account.signer.send_transaction(
         account=doctor_account.contract,
         to=contract.contract_address,
         selector_name="attest_drug_administration_log",
-        calldata=[drug_administration_id, prescription_id, drug_administration_log_hash],
+        calldata=[drug_administration_id, prescription_id, drug_administration_hash_1, drug_administration_hash_2],
     )
 
     # Check the state hash was committed
     observed_log = await contract.get_drug_administration_log(
         drug_administration_id=drug_administration_id
     ).call()
-    assert observed_log.result == ((prescription_id, drug_administration_log_hash),)
+    assert observed_log.result == ((prescription_id, drug_administration_hash_1, drug_administration_hash_2),)
 
 @pytest.mark.asyncio
 async def test_nurse_attest_drug_administration_log(contract_factory):
@@ -330,28 +339,30 @@ async def test_nurse_attest_drug_administration_log(contract_factory):
 
     prescription_id = 3
     drug_administration_id = 3
-    prescription_log_hash = 1234
-    drug_administration_log_hash = 14567
+    prescription_hash_1 = 1234
+    prescription_hash_2 = 5678
+    drug_administration_hash_1 = 14567
+    drug_administration_hash_2 = 28901
 
     await doctor_account.signer.send_transaction(
         account=doctor_account.contract,
         to=contract.contract_address,
         selector_name="attest_prescription_log",
-        calldata=[prescription_id, prescription_log_hash],
+        calldata=[prescription_id, prescription_hash_1, prescription_hash_2],
     )
 
     await nurse_account.signer.send_transaction(
         account=nurse_account.contract,
         to=contract.contract_address,
         selector_name="attest_drug_administration_log",
-        calldata=[drug_administration_id, prescription_id, drug_administration_log_hash],
+        calldata=[drug_administration_id, prescription_id, drug_administration_hash_1, drug_administration_hash_2],
     )
 
     # Check the state hash was committed
     observed_log = await contract.get_drug_administration_log(
         drug_administration_id=drug_administration_id
     ).call()
-    assert observed_log.result == ((prescription_id, drug_administration_log_hash),)
+    assert observed_log.result == ((prescription_id, drug_administration_hash_1, drug_administration_hash_2),)
 
 
 @pytest.mark.asyncio
@@ -364,5 +375,6 @@ async def test_attest_prescription_log_no_account(contract_factory):
         await contract.attest_drug_administration_log(
             drug_administration_id=6,
             prescription_id=6,
-            log_hash=4567,
+            hash_1=4567,
+            hash_2=8901,
         ).invoke()
