@@ -28,8 +28,17 @@ export class CaseService {
     return caseId;
   };
 
-  public getById = async (id: string): Promise<Case | null> =>
-    this.caseDao.getById(id);
+  public getById = async (id: string): Promise<Case | null> => {
+    const medicalCase = await this.caseDao.getById(id);
+    console.log(medicalCase);
+
+    if (!medicalCase) {
+      return null;
+    }
+
+    const prescriptions = await this.prescriptionService.getByCaseId(id);
+    return { ...medicalCase, prescriptions };
+  };
 
   public getByDoctorId = async (doctorId: string): Promise<Case[] | null> => {
     const cases = await this.caseDao.getAll(
