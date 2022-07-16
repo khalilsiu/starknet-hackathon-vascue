@@ -1,0 +1,4 @@
+export enum ErrorCode {
+  UNAUTHORIZED = "UNAUTHORIZED",
+  DUPLICATE_DATA = "DUPLICATE_DATA",
+}

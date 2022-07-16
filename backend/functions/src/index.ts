@@ -17,6 +17,12 @@ const app = createExpressServer({
     },
   },
   classTransformer: true,
+  plainToClassTransformOptions: {
+    enableImplicitConversion: true,
+  },
+  classToPlainTransformOptions: {
+    enableImplicitConversion: true,
+  },
   defaultErrorHandler: false,
   controllers: [join(__dirname, "/controllers/*.controller.js")],
   middlewares: [ErrorHandler],

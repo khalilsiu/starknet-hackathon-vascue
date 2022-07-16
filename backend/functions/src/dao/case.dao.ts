@@ -9,7 +9,7 @@ export class CaseDao {
   private static COLLECTION_NAME = "cases";
 
   public create = async (
-    caseDto: CaseDto,
+    caseDto: Omit<CaseDto, "prescriptions">,
     id?: string
   ): Promise<string | null> => {
     const docId = id ?? nanoid();

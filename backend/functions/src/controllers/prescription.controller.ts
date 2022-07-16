@@ -2,11 +2,11 @@ import { Body, Post, UseBefore } from "routing-controllers";
 import { PrescriptionDto } from "../dto";
 import { PrescriptionService } from "../services";
 import { Controller } from "../decorators";
-import { Prescription as P } from "../constants";
-import { IsAuthenticated, IsDoctorMiddleware } from "../middlewares";
+import { PrescriptionAction as PA, Role } from "../constants";
+import { IsAuthenticated, IsAuthorized } from "../middlewares";
 
 @Controller("/prescriptions")
-@UseBefore(IsAuthenticated, IsDoctorMiddleware)
+@UseBefore(IsAuthenticated, IsAuthorized(Role.DOCTOR))
 export class PrescriptionController {
   constructor(private readonly prescriptionService: PrescriptionService) {}
 
@@ -17,7 +17,7 @@ export class PrescriptionController {
    */
   @Post()
   public async create(
-    @Body({ validate: { groups: [P.CREATE] } })
+    @Body({ validate: { groups: [PA.CREATE] } })
     Prescription: PrescriptionDto
   ): ApiResponse {
     const id = await this.prescriptionService.create(Prescription);

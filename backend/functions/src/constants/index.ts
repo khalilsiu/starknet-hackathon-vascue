@@ -1,4 +1,4 @@
-export * from "./action.constant";
+export * from "./error-code.constant";
 export * from "./role.constant";
 export * from "./user.constant";
 export * from "./validation.constant";

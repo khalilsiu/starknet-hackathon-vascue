@@ -11,20 +11,21 @@ export class CaseService {
   ) {}
 
   public create = async (caseDto: CaseDto): Promise<string | null> => {
-    const caseId = await this.caseDao.create(caseDto);
+    const { prescriptions, ...caseData } = caseDto;
+    const caseId = await this.caseDao.create(caseData);
 
     if (!caseId) {
       return null;
     }
 
     // TODO: use batch to write
-    const prescriptionPromises = caseDto.prescriptions.map(
-      async (prescription) => {
-        await this.prescriptionService.create({ ...prescription, caseId });
-      }
-    );
+    // const prescriptionPromises = caseDto.prescriptions.map(
+    //   async (prescription) => {
+    //     await this.prescriptionService.create({ ...prescription, caseId });
+    //   }
+    // );
 
-    await Promise.allSettled(prescriptionPromises);
+    // await Promise.allSettled(prescriptionPromises);
 
     return caseId;
   };

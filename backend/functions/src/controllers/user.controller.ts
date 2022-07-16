@@ -1,17 +1,14 @@
-import { Body, Get, Param, Post, UseBefore } from "routing-controllers";
+import { Body, Post, UseBefore } from "routing-controllers";
 import { UserDto } from "../dto";
-import { CaseService, UserService } from "../services";
+import { UserService } from "../services";
 import { Controller } from "../decorators";
-import { User as U } from "../constants";
-import { IsAuthenticated, IsDoctorMiddleware } from "../middlewares";
+import { Role, User as U } from "../constants";
+import { IsAuthenticated, IsAuthorized } from "../middlewares";
 
 @Controller("/users")
-@UseBefore(IsAuthenticated)
+@UseBefore(IsAuthenticated, IsAuthorized(Role.ADMIN))
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly caseService: CaseService
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   /**
    * Create User - Doctor, Nurse, Moderator
@@ -25,17 +22,5 @@ export class UserController {
     const id = await this.userService.create(user);
 
     return { success: !!id, data: { id } };
-  }
-
-  /**
-   * Get cases created by the doctor
-   * @returns
-   */
-  @Get("/:id/cases")
-  @UseBefore(IsDoctorMiddleware)
-  public async getDoctorCases(@Param("id") id: string): ApiResponse {
-    const data = await this.caseService.getByDoctorId(id);
-
-    return { success: !!id, data };
   }
 }

@@ -1,3 +1,3 @@
-export enum Case {
+export enum CaseAction {
   CREATE = "CASE_CREATION",
 }

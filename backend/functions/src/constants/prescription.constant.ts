@@ -1,3 +1,3 @@
-export enum Prescription {
+export enum PrescriptionAction {
   CREATE = "PRESCRIPTION_CREATION",
 }

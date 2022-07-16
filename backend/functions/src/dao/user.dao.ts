@@ -22,6 +22,11 @@ export class UserDao {
     return request?.writeTime ? docId : null;
   };
 
+  public isDuplicated = async (walletId: string): Promise<Boolean> => {
+    const users = await this.getAll([["walletId", "==", walletId]]);
+    return users.length > 0;
+  };
+
   public getById = async (id: string): Promise<User | null> => {
     const doc = await db.collection(UserDao.COLLECTION_NAME).doc(id).get();
 
@@ -48,7 +53,7 @@ export class UserDao {
     const users: User[] = [];
 
     userSnapshot.docs.forEach((doc) => {
-      users.push(doc.data() as User);
+      users.push({ id: doc.id, ...doc.data() } as User);
     });
 
     return users;
