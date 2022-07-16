@@ -21,7 +21,7 @@ source .env
 nile compile
 
 # deploy contract 
-nile deploy contract --alias blackbox {OWNER_ADDRESS}
+nile deploy contract --alias vascue --network=goerli {OWNER_ADDRESS}
 
 ## Set up local devnet
 ```bash

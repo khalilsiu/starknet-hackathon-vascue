@@ -1,0 +1,1 @@
+0x07d8bb55dd997724a7df107c98ecb405c9a328cda99116b4d67bbaf313179f50:artifacts/abis/contract.json:vascue
