@@ -23,7 +23,7 @@ export class ErrorHandler implements ExpressErrorMiddlewareInterface {
     }
 
     let statusCode = 500;
-    let errorMessage = error.message || "Internal Error";
+    let message = error.message || "Internal Error";
 
     if (error instanceof HttpError) {
       statusCode = (error as HttpError).statusCode;
@@ -32,13 +32,13 @@ export class ErrorHandler implements ExpressErrorMiddlewareInterface {
     if ((error as any).response) {
       const errorResponse = (error as any).response || {};
 
-      errorMessage =
+      message =
         (errorResponse.body || {}).message ||
         (errorResponse.body || {}).description ||
         error.message ||
         "Internal Server Error";
       statusCode = errorResponse.statusCode || errorResponse.status || 500; // axios or got error type with response
-      res.setHeader("X-Debug-Error-Message", JSON.stringify(errorMessage));
+      res.setHeader("X-Debug-Error-Message", JSON.stringify(message));
     }
 
     if (error.name) {
@@ -46,9 +46,9 @@ export class ErrorHandler implements ExpressErrorMiddlewareInterface {
     }
 
     const response = {
-      message: errorMessage,
+      data: { message },
       errors: (error as any)?.errors,
-      statusCode,
+      success: false,
     };
 
     logger.error(response);

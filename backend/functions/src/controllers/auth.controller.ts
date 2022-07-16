@@ -1,20 +1,22 @@
-import { Body, Post } from "routing-controllers";
+import { Body, OnNull, Post } from "routing-controllers";
 import { sign } from "jsonwebtoken";
 import { UserDto } from "../dto";
 import { UserService } from "../services";
 import { Controller } from "../decorators";
 import { User as U } from "../constants";
+import { InvalidCredentialError } from "../http-errors";
 
 @Controller("/auth")
 export class AuthController {
   constructor(private readonly userService: UserService) {}
 
   /**
-   * Login
+   * Login - A simple login by checking wallet id only w/o challenge
    * @param user -> walletId
    * @returns
    */
   @Post("/login")
+  @OnNull(InvalidCredentialError)
   public async login(
     @Body({ validate: { groups: [U.LOGIN] } }) user: UserDto
   ): ApiResponse {
@@ -25,6 +27,6 @@ export class AuthController {
       return { success: !!existingUser, data: { accessToken } };
     }
 
-    return { success: !!existingUser, data: {} };
+    return null;
   }
 }

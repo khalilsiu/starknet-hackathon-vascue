@@ -34,7 +34,9 @@ export class PrescriptionDao {
   };
 
   public getAll = async (
-    conditions: [keyof Prescription, WhereFilterOp, string | number][] = []
+    conditions: [keyof Prescription, WhereFilterOp, string | number][] = [],
+    orderBy?: string,
+    orderDirection?: "asc" | "desc"
   ): Promise<Prescription[]> => {
     const prescriptionRef = db.collection(`${PrescriptionDao.COLLECTION_NAME}`);
 
@@ -44,7 +46,9 @@ export class PrescriptionDao {
       prescriptionRef
     );
 
-    const prescriptionSnapshot = await prescriptionQuery.get();
+    const prescriptionSnapshot = await prescriptionQuery
+      .orderBy(orderBy || "createdAt", orderDirection || "asc")
+      .get();
 
     if (prescriptionSnapshot.empty) {
       return [];

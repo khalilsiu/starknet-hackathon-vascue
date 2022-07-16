@@ -11,12 +11,12 @@ export class DoctorController {
   constructor(private readonly caseService: CaseService) {}
 
   /**
-   * Get cases created by the doctor
+   * Get cases created by specific doctor
    * @returns
    */
   @Get("/:id/cases")
-  @UseBefore(IsAuthorized(Role.ADMIN))
-  public async getDoctorCases(@Param("id") id: string): ApiResponse {
+  @UseBefore(IsAuthorized(Role.ADMIN, Role.NURSE))
+  public async getCasesByDoctorId(@Param("id") id: string) {
     const data = await this.caseService.getByDoctorId(id);
 
     return { success: !!data, data };
@@ -27,10 +27,8 @@ export class DoctorController {
    * @returns
    */
   @Get("/cases")
-  @UseBefore(IsAuthorized(Role.DOCTOR))
-  public async getAuthenticatedDoctorCases(
-    @Req() request: Request
-  ): ApiResponse {
+  @UseBefore(IsAuthorized(Role.ADMIN, Role.DOCTOR))
+  public async getAuthenticatedDoctorCases(@Req() request: Request) {
     const data = await this.caseService.getByDoctorId(request.auth?.id);
 
     return { success: !!data, data };

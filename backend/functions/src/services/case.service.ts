@@ -31,17 +31,21 @@ export class CaseService {
   public getById = async (id: string): Promise<Case | null> =>
     this.caseDao.getById(id);
 
-  public getByDoctorId = async (doctorId: string): Promise<Case | null> => {
-    const cases = await this.caseDao.getAll([["doctorId", "==", doctorId]]);
+  public getByDoctorId = async (doctorId: string): Promise<Case[] | null> => {
+    const cases = await this.caseDao.getAll(
+      [["doctorId", "==", doctorId]],
+      "createdAt",
+      "desc"
+    );
 
-    if (cases.length === 1) {
+    const allCases = cases.reduce(async (records, medicalCase) => {
       const prescriptions = await this.prescriptionService.getByCaseId(
-        cases[0].id!
+        medicalCase.id!
       );
 
-      return { ...cases[0], prescriptions };
-    }
+      return (await records).concat({ ...medicalCase, prescriptions });
+    }, Promise.resolve([] as Case[]));
 
-    return null;
+    return Promise.all(await allCases);
   };
 }

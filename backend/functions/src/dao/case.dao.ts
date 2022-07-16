@@ -29,7 +29,9 @@ export class CaseDao {
   };
 
   public getAll = async (
-    conditions: [keyof Case, WhereFilterOp, string | number][] = []
+    conditions: [keyof Case, WhereFilterOp, string | number][] = [],
+    orderBy?: string,
+    orderDirection?: "asc" | "desc"
   ): Promise<Case[]> => {
     const caseRef = db.collection(`${CaseDao.COLLECTION_NAME}`);
 
@@ -39,7 +41,9 @@ export class CaseDao {
       caseRef
     );
 
-    const caseSnapshot = await caseQuery.get();
+    const caseSnapshot = await caseQuery
+      .orderBy(orderBy || "createdAt", orderDirection || "asc")
+      .get();
 
     if (caseSnapshot.empty) {
       return [];
