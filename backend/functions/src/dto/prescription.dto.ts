@@ -23,6 +23,5 @@ export class PrescriptionDto {
   @Length(1, 4096, { message: V.NOT_WITHIN_RANGE, groups: [CA.CREATE] })
   public route: string;
 
-  @Length(1, 4096, { message: V.NOT_WITHIN_RANGE, groups: [CA.CREATE] })
   public caseId: string;
 }
