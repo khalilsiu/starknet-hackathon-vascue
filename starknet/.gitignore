@@ -4,3 +4,4 @@ tests/__pycache__/*
 localhost.accounts.json
 localhost.deployments.txt
 node.json
+env/

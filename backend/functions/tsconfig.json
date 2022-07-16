@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "declaration": false,
+    // "noEmit": true,
+    "outDir": "lib",
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "target": "ES2022",
+    "pretty": true,
+    "sourceMap": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "preserveConstEnums": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "skipLibCheck": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "resolveJsonModule": true,
+    "typeRoots": ["types", "node_modules/@types"]
+  },
+  "compileOnSave": true,
+  "include": ["src"]
+}
