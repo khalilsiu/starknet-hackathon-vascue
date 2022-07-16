@@ -19,13 +19,11 @@ export class CaseService {
     }
 
     // TODO: use batch to write
-    // const prescriptionPromises = caseDto.prescriptions.map(
-    //   async (prescription) => {
-    //     await this.prescriptionService.create({ ...prescription, caseId });
-    //   }
-    // );
+    const prescriptionPromises = prescriptions.map(async (prescription) => {
+      await this.prescriptionService.create({ ...prescription, caseId });
+    });
 
-    // await Promise.allSettled(prescriptionPromises);
+    await Promise.allSettled(prescriptionPromises);
 
     return caseId;
   };

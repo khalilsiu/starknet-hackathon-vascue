@@ -7,8 +7,7 @@ export class CaseDto {
   @Length(1, 66, { message: V.NOT_WITHIN_RANGE, groups: [CA.CREATE] })
   public doctorId: string;
 
-  // TODO: Nested Validation not working
   @ValidateNested({ each: true, groups: [CA.CREATE] })
   @Type(() => PrescriptionDto)
-  public prescriptions: PrescriptionDto;
+  public prescriptions: PrescriptionDto[];
 }
