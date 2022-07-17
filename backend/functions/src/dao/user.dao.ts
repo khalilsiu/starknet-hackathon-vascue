@@ -10,8 +10,8 @@ export class UserDao {
   private static COLLECTION_NAME = "users";
 
   public create = async (
-    user: UserDto,
-    id?: string
+      user: UserDto,
+      id?: string
   ): Promise<string | null> => {
     const docId = id ?? toHex(nanoid(), { addPrefix: true });
     const userRef = db.collection(UserDao.COLLECTION_NAME).doc(docId);
@@ -23,7 +23,7 @@ export class UserDao {
     return request?.writeTime ? docId : null;
   };
 
-  public isDuplicated = async (walletId: string): Promise<Boolean> => {
+  public isDuplicated = async (walletId: string): Promise<boolean> => {
     const users = await this.getAll([["walletId", "==", walletId]]);
     return users.length > 0;
   };
@@ -35,14 +35,14 @@ export class UserDao {
   };
 
   public getAll = async (
-    conditions: [keyof User, WhereFilterOp, string | number][] = []
+      conditions: [keyof User, WhereFilterOp, string | number][] = []
   ): Promise<User[]> => {
     const userRef = db.collection(`${UserDao.COLLECTION_NAME}`);
 
     const userQuery = conditions.reduce(
-      (acc: Query<DocumentData>, condition) =>
-        acc.where(condition[0] as string, condition[1], condition[2]),
-      userRef
+        (acc: Query<DocumentData>, condition) =>
+          acc.where(condition[0] as string, condition[1], condition[2]),
+        userRef
     );
 
     const userSnapshot = await userQuery.get();

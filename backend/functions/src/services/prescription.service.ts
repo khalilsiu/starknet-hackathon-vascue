@@ -7,7 +7,7 @@ export class PrescriptionService {
   constructor(private readonly prescriptionDao: PrescriptionDao) {}
 
   public create = async (
-    prescription: PrescriptionDto
+      prescription: PrescriptionDto
   ): Promise<string | null> => this.prescriptionDao.create(prescription);
 
   public getById = async (id: string): Promise<Prescription | null> =>

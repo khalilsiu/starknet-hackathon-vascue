@@ -10,8 +10,8 @@ export class CaseDao {
   private static COLLECTION_NAME = "cases";
 
   public create = async (
-    caseDto: Omit<CaseDto, "prescriptions">,
-    id?: string
+      caseDto: Omit<CaseDto, "prescriptions">,
+      id?: string
   ): Promise<string | null> => {
     const docId = id ?? toHex(nanoid(), { addPrefix: true });
     const caseRef = db.collection(CaseDao.COLLECTION_NAME).doc(docId);
@@ -30,21 +30,21 @@ export class CaseDao {
   };
 
   public getAll = async (
-    conditions: [keyof Case, WhereFilterOp, string | number][] = [],
-    orderBy?: string,
-    orderDirection?: "asc" | "desc"
+      conditions: [keyof Case, WhereFilterOp, string | number][] = [],
+      orderBy?: string,
+      orderDirection?: "asc" | "desc"
   ): Promise<Case[]> => {
     const caseRef = db.collection(`${CaseDao.COLLECTION_NAME}`);
 
     const caseQuery = conditions.reduce(
-      (acc: Query<DocumentData>, condition) =>
-        acc.where(condition[0] as string, condition[1], condition[2]),
-      caseRef
+        (acc: Query<DocumentData>, condition) =>
+          acc.where(condition[0] as string, condition[1], condition[2]),
+        caseRef
     );
 
     const caseSnapshot = await caseQuery
-      .orderBy(orderBy || "createdAt", orderDirection || "asc")
-      .get();
+        .orderBy(orderBy || "createdAt", orderDirection || "asc")
+        .get();
 
     if (caseSnapshot.empty) {
       return [];

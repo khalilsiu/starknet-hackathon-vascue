@@ -41,9 +41,9 @@ export class CaseService {
 
   public getByDoctorId = async (doctorId: string): Promise<Case[] | null> => {
     const cases = await this.caseDao.getAll(
-      [["doctorId", "==", doctorId]],
-      "createdAt",
-      "desc"
+        [["doctorId", "==", doctorId]],
+        "createdAt",
+        "desc"
     );
 
     const allCases = cases.reduce(async (records, medicalCase) => {

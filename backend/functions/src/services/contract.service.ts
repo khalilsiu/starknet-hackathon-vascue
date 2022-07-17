@@ -20,7 +20,7 @@ export class ContractService {
     });
 
     const account = new Account(
-      library,
+        library,
       process.env.OWNER_ADDRESS!,
       ec.getKeyPair(process.env.OWNER_PRIVATE_KEY!)
     );
@@ -33,8 +33,8 @@ export class ContractService {
   }
 
   public register = async (
-    role: Omit<Role, "ADMIN" | "MODERATOR">,
-    args: any[]
+      role: Omit<Role, "ADMIN" | "MODERATOR">,
+      args: unknown[]
   ): Promise<AddTransactionResponse> => {
     return this.contract.invoke(`register_${role.toLowerCase()}`, args, {
       maxFee: Number.MAX_SAFE_INTEGER,

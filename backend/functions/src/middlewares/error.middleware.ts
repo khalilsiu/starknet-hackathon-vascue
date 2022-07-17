@@ -11,10 +11,10 @@ import { logger } from "../logger";
 @Service()
 export class ErrorHandler implements ExpressErrorMiddlewareInterface {
   public error(
-    error: Error,
-    _req: Request,
-    res: Response,
-    next: () => any
+      error: Error,
+      _req: Request,
+      res: Response,
+      next: () => any
   ): void {
     if (!error) {
       next();
@@ -37,7 +37,7 @@ export class ErrorHandler implements ExpressErrorMiddlewareInterface {
         (errorResponse.body || {}).description ||
         error.message ||
         "Internal Server Error";
-      statusCode = errorResponse.statusCode || errorResponse.status || 500; // axios or got error type with response
+      statusCode = errorResponse.statusCode || errorResponse.status || 500;
       res.setHeader("X-Debug-Error-Message", JSON.stringify(message));
     }
 

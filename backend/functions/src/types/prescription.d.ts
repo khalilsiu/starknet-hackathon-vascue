@@ -1,4 +1,4 @@
-import { Role, Unit } from "../constants";
+import { Unit } from "../constants";
 
 declare global {
   type Prescription = {

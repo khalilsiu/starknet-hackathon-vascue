@@ -7,7 +7,7 @@ export class DrugAdminLogService {
   constructor(private readonly drugAdminLogDao: DrugAdminLogDao) {}
 
   public create = async (
-    drugAdminLog: DrugAdminLogDto
+      drugAdminLog: DrugAdminLogDto
   ): Promise<string | null> => this.drugAdminLogDao.create(drugAdminLog);
 
   public getById = async (id: string): Promise<DrugAdminLog | null> =>

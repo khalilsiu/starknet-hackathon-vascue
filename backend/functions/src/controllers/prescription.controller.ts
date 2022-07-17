@@ -19,7 +19,7 @@ export class PrescriptionController {
   @UseBefore(IsAuthorized(Role.DOCTOR))
   public async create(
     @Body({ validate: { groups: [PA.CREATE] } })
-    Prescription: PrescriptionDto
+        Prescription: PrescriptionDto
   ): ApiResponse {
     const id = await this.prescriptionService.create(Prescription);
 

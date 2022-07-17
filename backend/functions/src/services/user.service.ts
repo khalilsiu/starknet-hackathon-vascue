@@ -12,7 +12,7 @@ export class UserService {
   ) {}
 
   public create = async (
-    user: UserDto
+      user: UserDto
   ): Promise<Record<string, string> | null> => {
     if (await this.userDao.isDuplicated(user.walletId)) {
       throw new Error(EC.DUPLICATE_DATA);

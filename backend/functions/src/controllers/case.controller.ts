@@ -14,7 +14,7 @@ export class CaseController {
   @UseBefore(IsAuthorized(Role.ADMIN, Role.DOCTOR))
   public async create(
     @Body({ validate: { groups: [CA.CREATE] } })
-    caseDto: CaseDto
+        caseDto: CaseDto
   ): ApiResponse {
     const id = await this.caseService.create(caseDto);
 

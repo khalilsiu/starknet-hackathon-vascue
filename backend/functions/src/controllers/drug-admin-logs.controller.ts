@@ -19,7 +19,7 @@ export class DrugAdminLogController {
   @UseBefore(IsAuthorized(Role.ADMIN, Role.DOCTOR, Role.NURSE))
   public async create(
     @Body({ validate: { groups: [DALA.CREATE] } })
-    drugAdminLog: DrugAdminLogDto
+        drugAdminLog: DrugAdminLogDto
   ): ApiResponse {
     const id = await this.drugAdminLogService.create(drugAdminLog);
 

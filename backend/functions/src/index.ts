@@ -21,6 +21,7 @@ const app = createExpressServer({
   controllers: [join(__dirname, "/controllers/*.controller.js")],
   middlewares: [ErrorHandler],
   routePrefix: "/api",
+  cors: true,
 });
 
 app.use(loggerMiddleware);

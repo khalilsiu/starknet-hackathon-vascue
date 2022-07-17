@@ -1,5 +1,8 @@
-import { Controller as RoutingController, JsonController } from 'routing-controllers';
-import { Service } from 'typedi';
+import {
+  Controller as RoutingController,
+  JsonController,
+} from "routing-controllers";
+import { Service } from "typedi";
 
 export const Controller =
   (...args: Parameters<typeof RoutingController>) =>
