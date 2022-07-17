@@ -41,7 +41,6 @@ export const AuthContextProvider = memo(({ children }: { children: ReactNode }) 
           method: "POST",
           url: apiUrl + "/auth/login",
         });
-        console.log(response)
         const { user, accessToken } = response.data.data
         setUserId(user.id);
         setName(user.name);
