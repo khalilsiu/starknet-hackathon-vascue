@@ -13,7 +13,7 @@ export interface AuthContextType {
   role: Role | null
   error: string
   loaded: boolean
-  accessToken: string
+  accessToken: string | null
 }
 
 export const AuthContext = createContext<AuthContextType>(null as any);
@@ -26,7 +26,7 @@ export const AuthContextProvider = memo(({ children }: { children: ReactNode }) 
   const [userId, setUserId] = useState('');
   const [name, setName] = useState('');
   const [role, setRole] = useState<Role | null>(null);
-  const [accessToken, setAccessToken] = useState("");
+  const [accessToken, setAccessToken] = useState<string | null>(null);
 
   useEffect(() => {
     if (!account) {
