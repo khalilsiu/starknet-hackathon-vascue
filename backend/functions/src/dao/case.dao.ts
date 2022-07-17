@@ -1,6 +1,7 @@
 import { DocumentData, Query, WhereFilterOp } from "@google-cloud/firestore";
 import { Service } from "typedi";
 import { nanoid } from "nanoid";
+import toHex from "to-hex";
 import { db } from "../firestore";
 import { CaseDto } from "../dto";
 
@@ -12,7 +13,7 @@ export class CaseDao {
     caseDto: Omit<CaseDto, "prescriptions">,
     id?: string
   ): Promise<string | null> => {
-    const docId = id ?? nanoid();
+    const docId = id ?? toHex(nanoid(), { addPrefix: true });
     const caseRef = db.collection(CaseDao.COLLECTION_NAME).doc(docId);
     const request = await caseRef.set({
       ...caseDto,

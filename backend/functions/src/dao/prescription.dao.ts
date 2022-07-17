@@ -1,6 +1,7 @@
 import { DocumentData, Query, WhereFilterOp } from "@google-cloud/firestore";
 import { Service } from "typedi";
 import { nanoid } from "nanoid";
+import toHex from "to-hex";
 import { db } from "../firestore";
 import { PrescriptionDto } from "../dto";
 
@@ -12,7 +13,7 @@ export class PrescriptionDao {
     prescription: PrescriptionDto,
     id?: string
   ): Promise<string | null> => {
-    const docId = id ?? nanoid();
+    const docId = id ?? toHex(nanoid(), { addPrefix: true });
     const prescriptionRef = db
       .collection(PrescriptionDao.COLLECTION_NAME)
       .doc(docId);

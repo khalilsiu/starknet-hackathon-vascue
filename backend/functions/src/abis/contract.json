@@ -1,0 +1,291 @@
+[
+    {
+        "members": [
+            {
+                "name": "hash_1",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "hash_2",
+                "offset": 1,
+                "type": "felt"
+            }
+        ],
+        "name": "PrescriptionLog",
+        "size": 2,
+        "type": "struct"
+    },
+    {
+        "members": [
+            {
+                "name": "prescription_id",
+                "offset": 0,
+                "type": "felt"
+            },
+            {
+                "name": "hash_1",
+                "offset": 1,
+                "type": "felt"
+            },
+            {
+                "name": "hash_2",
+                "offset": 2,
+                "type": "felt"
+            }
+        ],
+        "name": "DrugAdministrationLog",
+        "size": 3,
+        "type": "struct"
+    },
+    {
+        "inputs": [
+            {
+                "name": "owner_address",
+                "type": "felt"
+            }
+        ],
+        "name": "constructor",
+        "outputs": [],
+        "type": "constructor"
+    },
+    {
+        "inputs": [
+            {
+                "name": "input_len",
+                "type": "felt"
+            },
+            {
+                "name": "input",
+                "type": "felt*"
+            },
+            {
+                "name": "n_bytes",
+                "type": "felt"
+            }
+        ],
+        "name": "compute_sha256",
+        "outputs": [
+            {
+                "name": "res0",
+                "type": "felt"
+            },
+            {
+                "name": "res1",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "get_owner",
+        "outputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "get_doctor_id",
+        "outputs": [
+            {
+                "name": "doctor_id",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "get_nurse_id",
+        "outputs": [
+            {
+                "name": "nurse_id",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "prescription_id",
+                "type": "felt"
+            }
+        ],
+        "name": "get_prescription_log",
+        "outputs": [
+            {
+                "name": "prescription_log",
+                "type": "PrescriptionLog"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "drug_administration_id",
+                "type": "felt"
+            }
+        ],
+        "name": "get_drug_administration_log",
+        "outputs": [
+            {
+                "name": "drug_administration_log",
+                "type": "DrugAdministrationLog"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "prescription_id",
+                "type": "felt"
+            },
+            {
+                "name": "input_len",
+                "type": "felt"
+            },
+            {
+                "name": "input",
+                "type": "felt*"
+            },
+            {
+                "name": "n_bytes",
+                "type": "felt"
+            }
+        ],
+        "name": "verify_prescription_log",
+        "outputs": [
+            {
+                "name": "result",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "drug_administration_id",
+                "type": "felt"
+            },
+            {
+                "name": "input_len",
+                "type": "felt"
+            },
+            {
+                "name": "input",
+                "type": "felt*"
+            },
+            {
+                "name": "n_bytes",
+                "type": "felt"
+            }
+        ],
+        "name": "verify_drug_administration_log",
+        "outputs": [
+            {
+                "name": "result",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "doctor_id",
+                "type": "felt"
+            },
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "register_doctor",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "nurse_id",
+                "type": "felt"
+            },
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "register_nurse",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "prescription_id",
+                "type": "felt"
+            },
+            {
+                "name": "hash_1",
+                "type": "felt"
+            },
+            {
+                "name": "hash_2",
+                "type": "felt"
+            }
+        ],
+        "name": "attest_prescription_log",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "drug_administration_id",
+                "type": "felt"
+            },
+            {
+                "name": "prescription_id",
+                "type": "felt"
+            },
+            {
+                "name": "hash_1",
+                "type": "felt"
+            },
+            {
+                "name": "hash_2",
+                "type": "felt"
+            }
+        ],
+        "name": "attest_drug_administration_log",
+        "outputs": [],
+        "type": "function"
+    }
+]

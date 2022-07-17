@@ -2,17 +2,29 @@ import { Service } from "typedi";
 import { ErrorCode as EC } from "../constants";
 import { UserDao } from "../dao";
 import { UserDto } from "../dto";
+import { ContractService } from "./contract.service";
 
 @Service()
 export class UserService {
-  constructor(private readonly userDao: UserDao) {}
+  constructor(
+    private readonly userDao: UserDao,
+    private readonly contractService: ContractService
+  ) {}
 
   public create = async (user: UserDto): Promise<string | null> => {
     if (await this.userDao.isDuplicated(user.walletId)) {
       throw new Error(EC.DUPLICATE_DATA);
     }
 
-    return this.userDao.create(user);
+    const id = await this.userDao.create(user);
+    const response = await this.contractService.register(user.role, [
+      id,
+      user.walletId,
+    ]);
+
+    console.log(response);
+
+    return id;
   };
 
   public getById = async (id: string): Promise<User | null> =>

@@ -1,5 +1,6 @@
 import { Service } from "typedi";
 import { nanoid } from "nanoid";
+import toHex from "to-hex";
 import { db } from "../firestore";
 import { UserDto } from "../dto";
 import { DocumentData, Query, WhereFilterOp } from "@google-cloud/firestore";
@@ -12,7 +13,7 @@ export class UserDao {
     user: UserDto,
     id?: string
   ): Promise<string | null> => {
-    const docId = id ?? nanoid();
+    const docId = id ?? toHex(nanoid(), { addPrefix: true });
     const userRef = db.collection(UserDao.COLLECTION_NAME).doc(docId);
     const request = await userRef.set({
       ...user,
