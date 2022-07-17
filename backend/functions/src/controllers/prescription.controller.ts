@@ -11,7 +11,7 @@ export class PrescriptionController {
   constructor(private readonly prescriptionService: PrescriptionService) {}
 
   /**
-   * DEPRECATED - Prescription should not be created without case
+   * Create Prescription
    * @param Prescription
    * @returns
    */
