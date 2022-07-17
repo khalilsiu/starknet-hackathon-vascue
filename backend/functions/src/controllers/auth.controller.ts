@@ -8,7 +8,7 @@ import { InvalidCredentialError } from "../http-errors";
 
 @Controller("/auth")
 export class AuthController {
-  constructor(private readonly userService: UserService) {}
+  constructor (private readonly userService: UserService) { }
 
   /**
    * Login - A simple login by checking wallet id only w/o challenge
@@ -24,7 +24,7 @@ export class AuthController {
 
     if (existingUser) {
       const accessToken = sign(existingUser, process.env.JWT_SECRET!);
-      return { success: !!existingUser, data: { accessToken } };
+      return { success: !!existingUser, data: { accessToken, user: existingUser } };
     }
 
     return null;
