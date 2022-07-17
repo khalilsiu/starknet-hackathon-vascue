@@ -1,5 +1,5 @@
 import { Body, Get, Param, Post, UseBefore } from "routing-controllers";
-import { DrugAdminLogDto } from "../dto";
+import { DrugAdminLogDto, DrugAdminLogTxDto } from "../dto";
 import { DrugAdminLogService } from "../services";
 import { Controller } from "../decorators";
 import { DrugAdminLogAction as DALA, Role } from "../constants";
@@ -30,6 +30,17 @@ export class DrugAdminLogController {
   @UseBefore(IsAuthorized(Role.ADMIN, Role.DOCTOR, Role.NURSE))
   public async getById(@Param("id") id: string): ApiResponse {
     const data = await this.drugAdminLogService.getById(id);
+
+    return { success: !!data, data };
+  }
+
+  @Post("/tx")
+  @UseBefore(IsAuthorized(Role.DOCTOR, Role.NURSE))
+  public async createTx(
+    @Body({ validate: { groups: [DALA.CREATE_TX] } })
+        drugAdminLogTxDto: DrugAdminLogTxDto
+  ): ApiResponse {
+    const data = await this.drugAdminLogService.createTx(drugAdminLogTxDto);
 
     return { success: !!data, data };
   }

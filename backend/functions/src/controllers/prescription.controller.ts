@@ -1,5 +1,5 @@
 import { Body, Get, Param, Post, UseBefore } from "routing-controllers";
-import { PrescriptionDto } from "../dto";
+import { PrescriptionDto, PrescriptionTxDto } from "../dto";
 import { PrescriptionService } from "../services";
 import { Controller } from "../decorators";
 import { PrescriptionAction as PA, Role } from "../constants";
@@ -19,9 +19,9 @@ export class PrescriptionController {
   @UseBefore(IsAuthorized(Role.DOCTOR))
   public async create(
     @Body({ validate: { groups: [PA.CREATE] } })
-        Prescription: PrescriptionDto
+        prescription: PrescriptionDto
   ): ApiResponse {
-    const id = await this.prescriptionService.create(Prescription);
+    const id = await this.prescriptionService.create(prescription);
 
     return { success: !!id, data: { id } };
   }
@@ -30,6 +30,17 @@ export class PrescriptionController {
   @UseBefore(IsAuthorized(Role.DOCTOR, Role.NURSE))
   public async getById(@Param("id") id: string): ApiResponse {
     const data = await this.prescriptionService.getById(id);
+
+    return { success: !!data, data };
+  }
+
+  @Post("/tx")
+  @UseBefore(IsAuthorized(Role.DOCTOR, Role.NURSE))
+  public async createTx(
+    @Body({ validate: { groups: [PA.CREATE_TX] } })
+        prescriptionTx: PrescriptionTxDto
+  ): ApiResponse {
+    const data = await this.prescriptionService.createTx(prescriptionTx);
 
     return { success: !!data, data };
   }
