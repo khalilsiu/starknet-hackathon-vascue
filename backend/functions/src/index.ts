@@ -31,5 +31,5 @@ export const vascueStarknetApi = runWith({
   timeoutSeconds: 540,
   memory: "512MB",
 })
-  .region("europe-west3")
-  .https.onRequest(app);
+    .region("europe-west3")
+    .https.onRequest(app);
