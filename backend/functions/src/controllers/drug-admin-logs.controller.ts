@@ -35,7 +35,7 @@ export class DrugAdminLogController {
   }
 
   @Post("/tx")
-  @UseBefore(IsAuthorized(Role.DOCTOR, Role.NURSE))
+  @UseBefore(IsAuthorized(Role.ADMIN, Role.DOCTOR, Role.NURSE))
   public async createTx(
     @Body({ validate: { groups: [DALA.CREATE_TX] } })
         drugAdminLogTxDto: DrugAdminLogTxDto

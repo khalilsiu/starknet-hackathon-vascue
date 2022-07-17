@@ -17,12 +17,12 @@ export class ContractService {
   private provider: Provider;
 
   constructor() {
-    const provider = new Provider({
+    this.provider = new Provider({
       network: (process.env.STARKNET_NETWORK as NetworkName) || "goerli-alpha",
     });
 
     const account = new Account(
-        provider,
+        this.provider,
       process.env.OWNER_ADDRESS!,
       ec.getKeyPair(process.env.OWNER_PRIVATE_KEY!)
     );
