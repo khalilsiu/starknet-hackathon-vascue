@@ -30,7 +30,6 @@ export class CaseService {
 
   public getById = async (id: string): Promise<Case | null> => {
     const medicalCase = await this.caseDao.getById(id);
-    console.log(medicalCase);
 
     if (!medicalCase) {
       return null;

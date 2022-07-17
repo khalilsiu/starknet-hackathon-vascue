@@ -1,5 +1,12 @@
 import { Service } from "typedi";
-import { Abi, Account, Contract, ec, Provider } from "starknet";
+import {
+  Abi,
+  Account,
+  AddTransactionResponse,
+  Contract,
+  ec,
+  Provider,
+} from "starknet";
 import ContractAbi from "../abis/contract.json";
 import { Role } from "../constants";
 
@@ -28,7 +35,7 @@ export class ContractService {
   public register = async (
     role: Omit<Role, "ADMIN" | "MODERATOR">,
     args: any[]
-  ): Promise<any> => {
+  ): Promise<AddTransactionResponse> => {
     return this.contract.invoke(`register_${role.toLowerCase()}`, args, {
       maxFee: Number.MAX_SAFE_INTEGER,
     });
