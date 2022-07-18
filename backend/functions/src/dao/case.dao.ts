@@ -1,26 +1,30 @@
 import { DocumentData, Query, WhereFilterOp } from "@google-cloud/firestore";
 import { Service } from "typedi";
-import { nanoid } from "nanoid";
-import toHex from "to-hex";
+// import { nanoid } from "nanoid";
+// import toHex from "to-hex";
 import { db } from "../firestore";
 import { CaseDto } from "../dto";
+import { generateId } from "../utils";
 
 @Service()
 export class CaseDao {
   private static COLLECTION_NAME = "cases";
 
   public create = async (
-      caseDto: Omit<CaseDto, "prescriptions">,
-      id?: string
+      caseDto: Omit<CaseDto, "prescriptions">
   ): Promise<string | null> => {
-    const docId = id ?? toHex(nanoid(), { addPrefix: true });
-    const caseRef = db.collection(CaseDao.COLLECTION_NAME).doc(docId);
+    const dataCount = (await db.collection(`${CaseDao.COLLECTION_NAME}`).get())
+        .size;
+    const miniId = generateId(dataCount).toString();
+
+    // const docId = id ?? toHex(nanoid(), { addPrefix: true });
+    const caseRef = db.collection(CaseDao.COLLECTION_NAME).doc(miniId);
     const request = await caseRef.set({
       ...caseDto,
       createdAt: Date.now(),
     });
 
-    return request?.writeTime ? docId : null;
+    return request?.writeTime ? miniId : null;
   };
 
   public getById = async (id: string): Promise<Case | null> => {

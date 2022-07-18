@@ -1,4 +1,4 @@
-import { IsIn, Length } from "class-validator";
+import { IsIn, Length, Max, Min } from "class-validator";
 import {
   CaseAction as CA,
   PrescriptionAction as PA,
@@ -20,10 +20,14 @@ export class PrescriptionDto {
   })
   public drug: string;
 
-  // @Length(1, 4096, {
-  //   message: V.NOT_WITHIN_RANGE,
-  //   groups: [CA.CREATE, PA.CREATE],
-  // })
+  @Min(1, {
+    message: V.LESS_THAN_MIN_NUMBER,
+    groups: [CA.CREATE, PA.CREATE],
+  })
+  @Max(4096, {
+    message: V.LARGER_THAN_MAX_NUMBER,
+    groups: [CA.CREATE, PA.CREATE],
+  })
   public quantity: number;
 
   @IsIn(UNITS, {

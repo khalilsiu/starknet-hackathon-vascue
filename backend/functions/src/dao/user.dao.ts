@@ -1,26 +1,26 @@
 import { Service } from "typedi";
-import { nanoid } from "nanoid";
-import toHex from "to-hex";
 import { db } from "../firestore";
 import { UserDto } from "../dto";
 import { DocumentData, Query, WhereFilterOp } from "@google-cloud/firestore";
+import { generateId } from "../utils";
 
 @Service()
 export class UserDao {
   private static COLLECTION_NAME = "users";
 
-  public create = async (
-      user: UserDto,
-      id?: string
-  ): Promise<string | null> => {
-    const docId = id ?? toHex(nanoid(), { addPrefix: true });
-    const userRef = db.collection(UserDao.COLLECTION_NAME).doc(docId);
+  public create = async (user: UserDto): Promise<string | null> => {
+    const dataCount = (await db.collection(`${UserDao.COLLECTION_NAME}`).get())
+        .size;
+    const miniId = generateId(dataCount).toString();
+
+    // const docId = id ?? toHex(nanoid(), { addPrefix: true });
+    const userRef = db.collection(UserDao.COLLECTION_NAME).doc(miniId);
     const request = await userRef.set({
       ...user,
       createdAt: Date.now(),
     });
 
-    return request?.writeTime ? docId : null;
+    return request?.writeTime ? miniId : null;
   };
 
   public isDuplicated = async (walletId: string): Promise<boolean> => {

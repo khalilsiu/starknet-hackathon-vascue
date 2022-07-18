@@ -1,28 +1,31 @@
 import { DocumentData, Query, WhereFilterOp } from "@google-cloud/firestore";
 import { Service } from "typedi";
-import { nanoid } from "nanoid";
-import toHex from "to-hex";
 import { db } from "../firestore";
 import { PrescriptionDto } from "../dto";
+import { generateId } from "../utils";
 
 @Service()
 export class PrescriptionDao {
   private static COLLECTION_NAME = "prescriptions";
 
   public create = async (
-      prescription: PrescriptionDto,
-      id?: string
+      prescription: PrescriptionDto
   ): Promise<string | null> => {
-    const docId = id ?? toHex(nanoid(), { addPrefix: true });
+    const dataCount = (
+      await db.collection(`${PrescriptionDao.COLLECTION_NAME}`).get()
+    ).size;
+    const miniId = generateId(dataCount).toString();
+
+    // const docId = id ?? toHex(nanoid(), { addPrefix: true });
     const prescriptionRef = db
         .collection(PrescriptionDao.COLLECTION_NAME)
-        .doc(docId);
+        .doc(miniId);
     const request = await prescriptionRef.set({
       ...prescription,
       createdAt: Date.now(),
     });
 
-    return request?.writeTime ? docId : null;
+    return request?.writeTime ? miniId : null;
   };
 
   public getById = async (id: string): Promise<Prescription | null> => {
