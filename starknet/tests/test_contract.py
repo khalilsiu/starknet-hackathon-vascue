@@ -421,6 +421,4 @@ async def test_verify_prescription_log(contract_factory):
         32
     ).call()
 
-    print("result AHHHHHHH")
-    print(result)
     assert result.result == (1,)
