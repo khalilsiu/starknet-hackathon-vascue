@@ -1,6 +1,6 @@
 %lang starknet
 
-from contracts.sha256.sha256 import finalize_sha256, sha256
+from contracts.keccak.keccak import finalize_keccak, keccak
 from starkware.cairo.common.alloc import alloc
 from starkware.cairo.common.cairo_builtins import HashBuiltin, BitwiseBuiltin
 from starkware.cairo.common.math import assert_not_zero
@@ -13,12 +13,16 @@ from starkware.starknet.common.syscalls import get_caller_address
 struct PrescriptionLog:
     member hash_1: felt
     member hash_2: felt
+    member hash_3: felt
+    member hash_4: felt
 end
 
 struct DrugAdministrationLog:
     member prescription_id: felt
     member hash_1: felt
     member hash_2: felt
+    member hash_3: felt
+    member hash_4: felt
 end
 
 #
@@ -79,19 +83,18 @@ end
 #
 
 @view
-func compute_sha256{range_check_ptr, bitwise_ptr : BitwiseBuiltin*}(
-        input_len : felt, input : felt*, n_bytes : felt) -> (res0 : felt, res1 : felt):
+func compute_keccak{range_check_ptr, bitwise_ptr : BitwiseBuiltin*}(
+        input_len : felt, input : felt*, n_bytes : felt) -> (
+        res0 : felt, res1 : felt, res2 : felt, res3 : felt):
     alloc_locals
 
-    let (local sha256_ptr_start : felt*) = alloc()
-    let sha256_ptr = sha256_ptr_start
+    let (local keccak_ptr_start : felt*) = alloc()
+    let keccak_ptr = keccak_ptr_start
 
-    let (local output : felt*) = sha256{sha256_ptr=sha256_ptr}(input, n_bytes)
-    finalize_sha256(sha256_ptr_start=sha256_ptr_start, sha256_ptr_end=sha256_ptr)
+    let (local output : felt*) = keccak{keccak_ptr=keccak_ptr}(input, n_bytes)
+    finalize_keccak(keccak_ptr_start=keccak_ptr_start, keccak_ptr_end=keccak_ptr)
 
-    return (
-        output[3] + 2 ** 32 * output[2] + 2 ** 64 * output[1] + 2 ** 96 * output[0],
-        output[7] + 2 ** 32 * output[6] + 2 ** 64 * output[5] + 2 ** 96 * output[4])
+    return (output[0], output[1], output[2], output[3])
 end
 
 @view
@@ -140,9 +143,9 @@ func verify_prescription_log{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, r
     alloc_locals
 
     let (log) = prescription_log.read(prescription_id=prescription_id)
-    let (res0, res1) = compute_sha256(input_len=input_len, input=input, n_bytes=n_bytes)
+    let (res0, res1, res2, res3) = compute_keccak(input_len=input_len, input=input, n_bytes=n_bytes)
     
-    if (log.hash_1 - res0) * (log.hash_2 - res1) == 0:
+    if (log.hash_1 - res0) * (log.hash_2 - res1) * (log.hash_3 - res2) * (log.hash_4 - res3) == 0:
         return (result=1)
     end
 
@@ -156,9 +159,9 @@ func verify_drug_administration_log{syscall_ptr : felt*, pedersen_ptr : HashBuil
     alloc_locals
 
     let (log) = drug_administration_log.read(drug_administration_id=drug_administration_id)
-    let (res0, res1) = compute_sha256(input_len=input_len, input=input, n_bytes=n_bytes)
+    let (res0, res1, res2, res3) = compute_keccak(input_len=input_len, input=input, n_bytes=n_bytes)
 
-    if (log.hash_1 - res0) * (log.hash_2 - res1) == 0:
+    if (log.hash_1 - res0) * (log.hash_2 - res1) * (log.hash_3 - res2) * (log.hash_4 - res3) == 0:
         return (result=1)
     end
 
@@ -205,20 +208,22 @@ end
 # Doctor can attest to a prescription log hash
 @external
 func attest_prescription_log{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        prescription_id : felt, hash_1 : felt, hash_2 : felt):
+        prescription_id : felt, hash_1 : felt, hash_2 : felt, hash_3 : felt, hash_4 : felt):
     # Verify caller is a doctor
     onlyDoctor()
 
     # Make sure a unique prescription id was used
     let (log) = prescription_log.read(prescription_id=prescription_id)
-    assert log = PrescriptionLog(hash_1=0, hash_2=0)
+    assert log = PrescriptionLog(hash_1=0, hash_2=0, hash_3=0, hash_4=0)
 
     # Register log
     prescription_log.write(
         prescription_id=prescription_id,
         value=PrescriptionLog(
             hash_1=hash_1,
-            hash_2=hash_2
+            hash_2=hash_2,
+            hash_3=hash_3,
+            hash_4=hash_4,
         )
     )
     return ()
@@ -227,7 +232,7 @@ end
 # Both doctors and nurses can attest to a drug administration log hash
 @external
 func attest_drug_administration_log{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        drug_administration_id : felt, prescription_id : felt, hash_1 : felt, hash_2 : felt):
+        drug_administration_id : felt, prescription_id : felt, hash_1 : felt, hash_2 : felt, hash_3 : felt, hash_4 : felt):
     # Verify caller is a doctor or a nurse
     onlyHealthcareProviders()
 
@@ -235,10 +240,12 @@ func attest_drug_administration_log{syscall_ptr : felt*, pedersen_ptr : HashBuil
     let (pres_log) = prescription_log.read(prescription_id=prescription_id)
     assert_not_zero(pres_log.hash_1)
     assert_not_zero(pres_log.hash_2)
+    assert_not_zero(pres_log.hash_3)
+    assert_not_zero(pres_log.hash_4)
 
     # Make sure a unique drug administration id was used
     let (drug_admin_log) = drug_administration_log.read(drug_administration_id=drug_administration_id)
-    assert drug_admin_log = DrugAdministrationLog(prescription_id=0, hash_1=0, hash_2=0)
+    assert drug_admin_log = DrugAdministrationLog(prescription_id=0, hash_1=0, hash_2=0, hash_3=0, hash_4=0)
 
     # Register log
     drug_administration_log.write(
@@ -246,7 +253,9 @@ func attest_drug_administration_log{syscall_ptr : felt*, pedersen_ptr : HashBuil
         value=DrugAdministrationLog(
             prescription_id=prescription_id,
             hash_1=hash_1,
-            hash_2=hash_2
+            hash_2=hash_2,
+            hash_3=hash_3,
+            hash_4=hash_4,
         )
     )
     return ()
