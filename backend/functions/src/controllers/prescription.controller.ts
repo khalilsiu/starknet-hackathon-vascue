@@ -16,7 +16,7 @@ export class PrescriptionController {
    * @returns
    */
   @Post()
-  @UseBefore(IsAuthorized(Role.DOCTOR))
+  // @UseBefore(IsAuthorized(Role.DOCTOR))
   public async create(
     @Body({ validate: { groups: [PA.CREATE] } })
         prescription: PrescriptionDto

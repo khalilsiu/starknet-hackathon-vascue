@@ -1,0 +1,13 @@
+.form {
+    display: flex;
+    padding: 40px 50px;
+    flex-wrap: wrap;
+}
+
+.formItem {
+    display: flex;
+    box-sizing: border-box;
+    flex-direction: column;
+    padding: 5px 10px;
+    width: 50%;
+}

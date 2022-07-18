@@ -20,10 +20,10 @@ export class PrescriptionDto {
   })
   public drug: string;
 
-  @Length(1, 4096, {
-    message: V.NOT_WITHIN_RANGE,
-    groups: [CA.CREATE, PA.CREATE],
-  })
+  // @Length(1, 4096, {
+  //   message: V.NOT_WITHIN_RANGE,
+  //   groups: [CA.CREATE, PA.CREATE],
+  // })
   public quantity: number;
 
   @IsIn(UNITS, {
