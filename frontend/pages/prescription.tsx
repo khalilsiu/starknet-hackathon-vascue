@@ -10,6 +10,8 @@ import { useForm } from 'react-hook-form'
 import styles from '../styles.module.css'
 import { hashCode } from '../utils'
 import { toFelt } from 'starknet/utils/number'
+import { getChecksumAddress } from 'starknet'
+import { toHex } from 'starknet/dist/utils/number'
 
 const { apiUrl } = config
 
@@ -74,9 +76,9 @@ const PrescriptionPage: NextPage = () => {
       const { caseId, drug, quantity, unit, frequency, route } = getValues()
       console.log(data.user.id, hashCode(data.user.id))
       const args = [
-        "0x49632d5f356c4c514e492d59626d37345467363451",
+        prescriptionId,
         hashCode(caseId),
-        "0x49632d5f356c4c514e492d59626d37345467363451",
+        data.user.id,
         hashCode(drug),
         quantity,
         hashCode(unit),
@@ -85,7 +87,10 @@ const PrescriptionPage: NextPage = () => {
       ]
       console.log(args)
 
-      const resp = await vascue.compute_sha256(args, 32)
+      const [res0, res1, res2, res3]: any[] = await vascue.compute_keccak(args, 32)
+      console.log(prescriptionId, toHex(res0), toHex(res1), toHex(res2), toHex(res3))
+      const resp2 = await vascue.attest_prescription_log(prescriptionId, toHex(res0), toHex(res1), toHex(res2), toHex(res3))
+      console.log({resp2})
       // const resp = await vascue.compute_sha256(
       //   [
       //     hashCode('u7rKeBDum'),
@@ -99,7 +104,6 @@ const PrescriptionPage: NextPage = () => {
       //   ],
       //   32
       // )
-      console.log({ resp })
     } catch (e) {
       console.log(e)
     }
@@ -113,7 +117,7 @@ const PrescriptionPage: NextPage = () => {
       try {
         const response = await axios.request({
           data: {
-            walletId: account,
+            walletId: getChecksumAddress(account),
           },
           headers: {
             'Content-Type': 'application/json',

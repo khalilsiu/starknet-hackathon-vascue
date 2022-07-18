@@ -10,10 +10,20 @@
                 "name": "hash_2",
                 "offset": 1,
                 "type": "felt"
+            },
+            {
+                "name": "hash_3",
+                "offset": 2,
+                "type": "felt"
+            },
+            {
+                "name": "hash_4",
+                "offset": 3,
+                "type": "felt"
             }
         ],
         "name": "PrescriptionLog",
-        "size": 2,
+        "size": 4,
         "type": "struct"
     },
     {
@@ -32,10 +42,20 @@
                 "name": "hash_2",
                 "offset": 2,
                 "type": "felt"
+            },
+            {
+                "name": "hash_3",
+                "offset": 3,
+                "type": "felt"
+            },
+            {
+                "name": "hash_4",
+                "offset": 4,
+                "type": "felt"
             }
         ],
         "name": "DrugAdministrationLog",
-        "size": 3,
+        "size": 5,
         "type": "struct"
     },
     {
@@ -64,7 +84,7 @@
                 "type": "felt"
             }
         ],
-        "name": "compute_sha256",
+        "name": "compute_keccak",
         "outputs": [
             {
                 "name": "res0",
@@ -72,6 +92,14 @@
             },
             {
                 "name": "res1",
+                "type": "felt"
+            },
+            {
+                "name": "res2",
+                "type": "felt"
+            },
+            {
+                "name": "res3",
                 "type": "felt"
             }
         ],
@@ -259,6 +287,14 @@
             {
                 "name": "hash_2",
                 "type": "felt"
+            },
+            {
+                "name": "hash_3",
+                "type": "felt"
+            },
+            {
+                "name": "hash_4",
+                "type": "felt"
             }
         ],
         "name": "attest_prescription_log",
@@ -281,6 +317,14 @@
             },
             {
                 "name": "hash_2",
+                "type": "felt"
+            },
+            {
+                "name": "hash_3",
+                "type": "felt"
+            },
+            {
+                "name": "hash_4",
                 "type": "felt"
             }
         ],
