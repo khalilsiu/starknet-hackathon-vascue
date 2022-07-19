@@ -25,9 +25,12 @@ Most medical records is stored in centralised database of healthcare institutes.
 </p>
 
 ## Demo Link 🔗
+https://starknet-hackathon.vercel.app/
+Please use our private key: `0x048619c774fafbcd0ad10f292fc4f32e5c4983bba87f40fee524b0d6475aaa84`
+OR reach out to us to add you as Doctor through discord @wtkc#0540
 
 ## Demo Video 📹
-
+https://www.youtube.com/playlist?list=PLer67nQ2vBhUHHebA8mc475pbW_j-j3OX
 
 ## Future experiments 🧪
 We think we are just scratching the surface of what StarkNet and Cairo are possible to achieve.
