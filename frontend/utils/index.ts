@@ -12,8 +12,8 @@ export const hashCode = (input: string) => {
 export const splitAndHash = (input: string) => {
     let index = 0;
     const arr = []
-    while (index + 1 <= input.length) {
-        let endIndex = index + 1;
+    while (index + 3 <= input.length) {
+        let endIndex = index + 3;
         if (endIndex === input.length) {
             endIndex = input.length;
         }

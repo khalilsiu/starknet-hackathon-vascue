@@ -6,7 +6,7 @@ import { config } from 'src/config'
 import { LoginResponseData } from 'src/types/LoginResponseData'
 import { ConnectWallet } from '~/components/ConnectWallet'
 import { useVascueContract } from '~/hooks/vascue'
-import { useForm } from 'react-hook-form'
+import { FieldError, useForm } from 'react-hook-form'
 import styles from '../styles.module.css'
 import { createHexArgs, hashCode, splitAndHash } from '../utils'
 import { toFelt } from 'starknet/utils/number'
@@ -26,6 +26,25 @@ const drugs = [
   'Losartan',
   'Gabapentin',
 ]
+const routes = [
+  'oral',
+  'intravenous',
+  'intramuscular',
+  'intrathecal',
+  'subcutaneous',
+  'rectal',
+  'buccal',
+  'vaginal',
+  'ocular',
+  'nasal',
+  'inhalation',
+  'nebulisation',
+  'cutaneous',
+  'topical',
+  'transdermal',
+]
+
+const units = ['pills', 'tablets', 'mg', 'ml']
 
 const PrescriptionPage: NextPage = () => {
   const { account } = useStarknet()
@@ -44,10 +63,10 @@ const PrescriptionPage: NextPage = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      caseId: 'Peter',
-      drug: 'Penecillin',
-      quantity: 10,
-      unit: 'pill',
+      caseId: '',
+      drug: 'Atorvastatin',
+      quantity: 0,
+      unit: 'pills',
       frequency: 'hr',
       route: 'Hong Kong',
     },
@@ -99,8 +118,6 @@ const PrescriptionPage: NextPage = () => {
         route,
       ])
 
-      console.log('createHexArgs', args)
-
       const [res0, res1, res2, res3]: any[] = await vascue.compute_keccak(
         args,
         4 * args.length
@@ -142,6 +159,18 @@ const PrescriptionPage: NextPage = () => {
     })()
   }, [account])
 
+  console.log(errors)
+  const handleErrors = (error: FieldError, min?: number, max?: number) => {
+    if (error.type === 'max') {
+      return `Please enter a number less than ${max}`
+    }
+    if (error.type === 'min') {
+      return `Please enter a number larger than ${min}`
+    }
+    if (error.type === 'required') {
+      return `This field is required`
+    }
+  }
   return (
     <div>
       <ConnectWallet />
@@ -154,7 +183,7 @@ const PrescriptionPage: NextPage = () => {
             disabled={!loaded}
             {...(register('caseId'), { required: true, maxLength: 10 })}
           />
-          {errors.caseId && <span>This field is required</span>}
+          {errors.caseId && <span>{handleErrors(errors.caseId)}</span>}
         </div>
         <div className={styles.formItem}>
           <label htmlFor="drug">Drug</label>
@@ -169,7 +198,7 @@ const PrescriptionPage: NextPage = () => {
               </option>
             ))}
           </select>
-          {errors.drug && <span>This field is required</span>}
+          {errors.drug && <span>{handleErrors(errors.drug)}</span>}
         </div>
         <div className={styles.formItem}>
           <label htmlFor="quantity">Quantity</label>
@@ -178,7 +207,9 @@ const PrescriptionPage: NextPage = () => {
             id="quantity"
             {...register('quantity', { required: true, min: 0, max: 100 })}
           />
-          {errors.quantity && <span>This field is required</span>}
+          {errors.quantity && (
+            <span>{handleErrors(errors.quantity, 0, 100)}</span>
+          )}
         </div>
         <div className={styles.formItem}>
           <label htmlFor="unit">Unit</label>
@@ -187,25 +218,37 @@ const PrescriptionPage: NextPage = () => {
             id="unit"
             {...register('unit', { required: true })}
           />
-          {errors.unit && <span>This field is required</span>}
+          {errors.unit && <span>{handleErrors(errors.unit)}</span>}
         </div>
         <div className={styles.formItem}>
           <label htmlFor="frequency">Frequency</label>
-          <input
-            id="frequency"
+          <select
             disabled={!loaded}
+            id="frequency"
             {...register('frequency', { required: true })}
-          />
-          {errors.frequency && <span>This field is required</span>}
+          >
+            {units.map((frequency) => (
+              <option key={frequency} value={frequency}>
+                {frequency}
+              </option>
+            ))}
+          </select>
+          {errors.frequency && <span>{handleErrors(errors.frequency)}</span>}
         </div>
         <div className={styles.formItem}>
           <label htmlFor="route">Route</label>
-          <input
+          <select
             disabled={!loaded}
             id="route"
             {...register('route', { required: true })}
-          />
-          {errors.route && <span>This field is required</span>}
+          >
+            {routes.map((route) => (
+              <option key={route} value={route}>
+                {route}
+              </option>
+            ))}
+          </select>
+          {errors.route && <span>{handleErrors(errors.route)}</span>}
         </div>
         <div className={styles.formItem}>
           <input disabled={!loaded} type="submit" />
