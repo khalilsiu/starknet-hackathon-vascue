@@ -8,12 +8,24 @@ import { ConnectWallet } from '~/components/ConnectWallet'
 import { useVascueContract } from '~/hooks/vascue'
 import { useForm } from 'react-hook-form'
 import styles from '../styles.module.css'
-import { hashCode } from '../utils'
+import { createHexArgs, hashCode, splitAndHash } from '../utils'
 import { toFelt } from 'starknet/utils/number'
 import { getChecksumAddress } from 'starknet'
 import { toHex } from 'starknet/dist/utils/number'
 
 const { apiUrl } = config
+const drugs = [
+  'Atorvastatin',
+  'Levothyroxine',
+  'Lisinopril',
+  'Metformin',
+  'Metoprolol',
+  'Amlodipine',
+  'Albuterol',
+  'Omeprazole',
+  'Losartan',
+  'Gabapentin',
+]
 
 const PrescriptionPage: NextPage = () => {
   const { account } = useStarknet()
@@ -41,10 +53,12 @@ const PrescriptionPage: NextPage = () => {
     },
   })
   const onSubmit = async (formData: any) => {
+    console.log({ formData })
     if (!data) {
       setApiError('')
       return
     }
+    formData.quantity = parseInt(formData.quantity)
     try {
       const response = await axios.request({
         data: {
@@ -72,38 +86,32 @@ const PrescriptionPage: NextPage = () => {
       return
     }
     try {
-      console.log({ prescriptionId })
       const { caseId, drug, quantity, unit, frequency, route } = getValues()
-      console.log(data.user.id, hashCode(data.user.id))
-      const args = [
-        prescriptionId,
-        hashCode(caseId),
-        data.user.id,
-        hashCode(drug),
-        quantity,
-        hashCode(unit),
-        hashCode(frequency),
-        hashCode(route),
-      ]
-      console.log(args)
 
-      const [res0, res1, res2, res3]: any[] = await vascue.compute_keccak(args, 32)
-      console.log(prescriptionId, toHex(res0), toHex(res1), toHex(res2), toHex(res3))
-      const resp2 = await vascue.attest_prescription_log(prescriptionId, toHex(res0), toHex(res1), toHex(res2), toHex(res3))
-      console.log({resp2})
-      // const resp = await vascue.compute_sha256(
-      //   [
-      //     hashCode('u7rKeBDum'),
-      //     hashCode(caseId),
-      //     hashCode('u7rKeBDum'),
-      //     hashCode(drug),
-      //     quantity,
-      //     hashCode(unit),
-      //     hashCode(frequency),
-      //     hashCode(route),
-      //   ],
-      //   32
-      // )
+      const args = createHexArgs([
+        prescriptionId,
+        caseId,
+        data.user.id,
+        drug,
+        quantity.toString(),
+        unit,
+        frequency,
+        route,
+      ])
+
+      console.log('createHexArgs', args)
+
+      const [res0, res1, res2, res3]: any[] = await vascue.compute_keccak(
+        args,
+        4 * args.length
+      )
+      const resp2 = await vascue.attest_prescription_log(
+        prescriptionId,
+        toHex(res0),
+        toHex(res1),
+        toHex(res2),
+        toHex(res3)
+      )
     } catch (e) {
       console.log(e)
     }
@@ -143,19 +151,24 @@ const PrescriptionPage: NextPage = () => {
           <label htmlFor="caseId">Name</label>
           <input
             id="caseId"
-            defaultValue="caseId"
             disabled={!loaded}
-            {...(register('caseId'), { required: true })}
+            {...(register('caseId'), { required: true, maxLength: 10 })}
           />
           {errors.caseId && <span>This field is required</span>}
         </div>
         <div className={styles.formItem}>
           <label htmlFor="drug">Drug</label>
-          <input
+          <select
             disabled={!loaded}
             id="drug"
             {...register('drug', { required: true })}
-          />
+          >
+            {drugs.map((drug) => (
+              <option key={drug} value={drug}>
+                {drug}
+              </option>
+            ))}
+          </select>
           {errors.drug && <span>This field is required</span>}
         </div>
         <div className={styles.formItem}>
@@ -163,7 +176,7 @@ const PrescriptionPage: NextPage = () => {
           <input
             disabled={!loaded}
             id="quantity"
-            {...register('quantity', { required: true })}
+            {...register('quantity', { required: true, min: 0, max: 100 })}
           />
           {errors.quantity && <span>This field is required</span>}
         </div>
