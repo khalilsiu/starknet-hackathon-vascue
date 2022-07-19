@@ -1,29 +1,28 @@
 .form {
-    display: flex;
-    padding: 40px 0;
-    flex-wrap: wrap;
-    font-family: Raleway;
+  display: flex;
+  padding: 40px 0;
+  flex-wrap: wrap;
+  font-family: Raleway;
 }
+
 
 .form div label {
-    margin-bottom: 4px;
+  margin-bottom: 4px;
 }
 
-.errors{
-    font-family: Raleway;
-
+.errors {
+  font-family: Raleway;
 }
 
 .form div select,
 .form div input {
-    font-family: Raleway;
-
+  font-family: Raleway;
 }
 
 .formItem {
-    display: flex;
-    box-sizing: border-box;
-    flex-direction: column;
-    padding: 5px 10px;
-    width: 50%;
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  padding: 5px 10px;
+  width: 50%;
 }

@@ -17,6 +17,8 @@ import { trimAddress } from 'utils'
 import Link from 'next/link'
 import Image from 'next/image'
 import icon from '../static/logo.svg'
+import { useRouter } from 'next/router'
+import styles from '../../styles.module.css'
 
 const pages = [
   { label: 'Prescription', route: '/prescription' },
@@ -29,6 +31,7 @@ export const NavBar = () => {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   )
+  const router = useRouter()
 
   const { account } = useStarknet()
   const { available, connect, disconnect } = useConnectors()
@@ -110,21 +113,61 @@ export const NavBar = () => {
               ))}
             </Menu>
           </Box>
-          <Box sx={{ flexGrow: 1, display: { md: 'flex' } }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { md: 'flex' },
+            }}
+          >
             {pages.map((page) => (
-              <Link key={page.route} href={page.route}>
-                <a
-                  style={{
-                    textDecoration: 'none',
-                    fontFamily: "'Raleway','Noto Sans HK','Noto Sans SC'",
-                    fontWeight: 'bold',
-                    color: '#25282A',
-                    marginRight: '6px',
-                  }}
-                >
-                  {page.label}
-                </a>
-              </Link>
+              <Button
+                sx={{
+                  fontFamily: "'Raleway','Noto Sans HK','Noto Sans SC'",
+                  fontWeight: 'bold',
+                  color: 'white',
+                  border: '2px solid #25282A',
+                  borderRadius: '20px',
+                  padding: '4px 30px',
+                  textTransform: 'none',
+                  margin: '0 10px',
+                  '&:hover': {
+                    backgroundColor: '#D1D3D4',
+                  },
+                }}
+                style={
+                  router.pathname === page.route
+                    ? { backgroundColor: '#25282A' }
+                    : {}
+                }
+              >
+                <Link key={page.route} href={page.route}>
+                  <a
+                    style={
+                      router.pathname === page.route
+                        ? {
+                            color: 'white',
+                            textDecoration: 'none',
+                            fontFamily:
+                              "'Raleway','Noto Sans HK','Noto Sans SC'",
+                            fontWeight: 'bold',
+
+                            marginRight: '6px',
+                          }
+                        : {
+                            color: '#25282A',
+                            textDecoration: 'none',
+                            fontFamily:
+                              "'Raleway','Noto Sans HK','Noto Sans SC'",
+                            fontWeight: 'bold',
+
+                            marginRight: '6px',
+                          }
+                    }
+                  >
+                    {page.label}
+                  </a>
+                </Link>
+              </Button>
             ))}
           </Box>
 
@@ -166,36 +209,36 @@ export const NavBar = () => {
             >
               {account
                 ? settings.map((setting) => (
-                  <MenuItem
-                    key={setting}
-                    onClick={() => {
-                      disconnect()
-                      handleCloseUserMenu()
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        fontFamily: "'Raleway','Noto Sans HK','Noto Sans SC'",
-                        fontWeight: 'bold',
-                        color: '#25282A',
+                    <MenuItem
+                      key={setting}
+                      onClick={() => {
+                        disconnect()
+                        handleCloseUserMenu()
                       }}
-                      textAlign="center"
                     >
-                      {setting}
-                    </Typography>
-                  </MenuItem>
-                ))
+                      <Typography
+                        sx={{
+                          fontFamily: "'Raleway','Noto Sans HK','Noto Sans SC'",
+                          fontWeight: 'bold',
+                          color: '#25282A',
+                        }}
+                        textAlign="center"
+                      >
+                        {setting}
+                      </Typography>
+                    </MenuItem>
+                  ))
                 : available.map((connector) => (
-                  <MenuItem
-                    key={connector.id()}
-                    onClick={(e) => {
-                      connect(connector)
-                      handleCloseUserMenu()
-                    }}
-                  >
-                    {`Connect ${connector.name()}`}
-                  </MenuItem>
-                ))}
+                    <MenuItem
+                      key={connector.id()}
+                      onClick={(e) => {
+                        connect(connector)
+                        handleCloseUserMenu()
+                      }}
+                    >
+                      {`Connect ${connector.name()}`}
+                    </MenuItem>
+                  ))}
             </Menu>
           </Box>
         </Toolbar>
