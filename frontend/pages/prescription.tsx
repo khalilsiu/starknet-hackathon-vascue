@@ -12,6 +12,7 @@ import { createHexArgs, hashCode, splitAndHash } from '../utils'
 import { toFelt } from 'starknet/utils/number'
 import { getChecksumAddress } from 'starknet'
 import { toHex } from 'starknet/dist/utils/number'
+import { NavBar } from '~/components/NavBar'
 
 const { apiUrl } = config
 const drugs = [
@@ -27,24 +28,26 @@ const drugs = [
   'Gabapentin',
 ]
 const routes = [
-  'oral',
-  'intravenous',
-  'intramuscular',
-  'intrathecal',
-  'subcutaneous',
-  'rectal',
-  'buccal',
-  'vaginal',
-  'ocular',
-  'nasal',
-  'inhalation',
-  'nebulisation',
-  'cutaneous',
-  'topical',
-  'transdermal',
+  'Oral',
+  'Intravenous',
+  'Intramuscular',
+  'Intrathecal',
+  'Subcutaneous',
+  'Rectal',
+  'Buccal',
+  'Vaginal',
+  'Ocular',
+  'Nasal',
+  'Inhalation',
+  'Nebulisation',
+  'Cutaneous',
+  'Topical',
+  'Transdermal',
 ]
 
 const units = ['pills', 'tablets', 'mg', 'ml']
+
+const frequencies = ['1 per day', '2 per day', '3 per day', '4 per day']
 
 const PrescriptionPage: NextPage = () => {
   const { account } = useStarknet()
@@ -67,8 +70,8 @@ const PrescriptionPage: NextPage = () => {
       drug: 'Atorvastatin',
       quantity: 0,
       unit: 'pills',
-      frequency: 'hr',
-      route: 'Hong Kong',
+      frequency: '1 per day',
+      route: 'Oral',
     },
   })
   const onSubmit = async (formData: any) => {
@@ -138,7 +141,7 @@ const PrescriptionPage: NextPage = () => {
     if (!account) {
       return
     }
-    ; (async () => {
+    ;(async () => {
       try {
         const response = await axios.request({
           data: {
@@ -173,99 +176,121 @@ const PrescriptionPage: NextPage = () => {
   }
   return (
     <div>
-      <ConnectWallet />
-      {/* TODO: Add Prescription function here */}
-      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-        <div className={styles.formItem}>
-          <label htmlFor="caseId">Name</label>
-          <input
-            id="caseId"
-            disabled={!loaded}
-            {...(register('caseId'), { required: true, maxLength: 10 })}
-          />
-          {errors.caseId && <span>{handleErrors(errors.caseId)}</span>}
-        </div>
-        <div className={styles.formItem}>
-          <label htmlFor="drug">Drug</label>
-          <select
-            disabled={!loaded}
-            id="drug"
-            {...register('drug', { required: true })}
-          >
-            {drugs.map((drug) => (
-              <option key={drug} value={drug}>
-                {drug}
-              </option>
-            ))}
-          </select>
-          {errors.drug && <span>{handleErrors(errors.drug)}</span>}
-        </div>
-        <div className={styles.formItem}>
-          <label htmlFor="quantity">Quantity</label>
-          <input
-            disabled={!loaded}
-            id="quantity"
-            {...register('quantity', { required: true, min: 0, max: 100 })}
-          />
-          {errors.quantity && (
-            <span>{handleErrors(errors.quantity, 0, 100)}</span>
+      <NavBar />
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{ width: '50%' }}>
+          {/* TODO: Add Prescription function here */}
+          <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+            <div className={styles.formItem}>
+              <label htmlFor="caseId">Case ID</label>
+              <input
+                disabled={!loaded}
+                id="caseId"
+                {...register('caseId', { required: true, min: 1, max: 100 })}
+              />
+              {errors.caseId && <span>{handleErrors(errors.caseId)}</span>}
+            </div>
+            <div className={styles.formItem}>
+              <label htmlFor="drug">Drug</label>
+              <select
+                disabled={!loaded}
+                id="drug"
+                {...register('drug', { required: true })}
+              >
+                {drugs.map((drug) => (
+                  <option key={drug} value={drug}>
+                    {drug}
+                  </option>
+                ))}
+              </select>
+              {errors.drug && <span>{handleErrors(errors.drug)}</span>}
+            </div>
+            <div className={styles.formItem}>
+              <label htmlFor="quantity">Quantity</label>
+              <input
+                disabled={!loaded}
+                id="quantity"
+                {...register('quantity', { required: true, min: 1, max: 100 })}
+              />
+              {errors.quantity && (
+                <span>{handleErrors(errors.quantity, 0, 100)}</span>
+              )}
+            </div>
+            <div className={styles.formItem}>
+              <label htmlFor="unit">Unit</label>
+              <select
+                disabled={!loaded}
+                id="unit"
+                {...register('unit', { required: true })}
+              >
+                {units.map((unit) => (
+                  <option key={unit} value={unit}>
+                    {unit}
+                  </option>
+                ))}
+              </select>
+              {errors.unit && <span>{handleErrors(errors.unit)}</span>}
+            </div>
+            <div className={styles.formItem}>
+              <label htmlFor="frequency">Frequency</label>
+              <select
+                disabled={!loaded}
+                id="frequency"
+                {...register('frequency', { required: true })}
+              >
+                {frequencies.map((frequency) => (
+                  <option key={frequency} value={frequency}>
+                    {frequency}
+                  </option>
+                ))}
+              </select>
+              {errors.frequency && (
+                <span>{handleErrors(errors.frequency)}</span>
+              )}
+            </div>
+            <div className={styles.formItem}>
+              <label htmlFor="route">Route</label>
+              <select
+                disabled={!loaded}
+                id="route"
+                {...register('route', { required: true })}
+              >
+                {routes.map((route) => (
+                  <option key={route} value={route}>
+                    {route}
+                  </option>
+                ))}
+              </select>
+              {errors.route && <span>{handleErrors(errors.route)}</span>}
+            </div>
+            <div className={styles.formItem}>
+              <input disabled={!loaded} type="submit" />
+            </div>
+            <div className={styles.formItem}>
+              <button
+                onClick={handleAttest}
+                disabled={!loaded || !isDataSubmitted}
+              >
+                Attest
+              </button>
+            </div>
+          </form>
+
+          {prescriptionId && (
+            <div className="errors">
+              Your Prescription ID is 
+              <div>{prescriptionId}</div>
+            </div>
+          )}
+
+          {apiError && (
+            <div className="errors">
+              API Errors:
+              <div>{apiError}</div>
+            </div>
           )}
         </div>
-        <div className={styles.formItem}>
-          <label htmlFor="unit">Unit</label>
-          <input
-            disabled={!loaded}
-            id="unit"
-            {...register('unit', { required: true })}
-          />
-          {errors.unit && <span>{handleErrors(errors.unit)}</span>}
-        </div>
-        <div className={styles.formItem}>
-          <label htmlFor="frequency">Frequency</label>
-          <select
-            disabled={!loaded}
-            id="frequency"
-            {...register('frequency', { required: true })}
-          >
-            {units.map((frequency) => (
-              <option key={frequency} value={frequency}>
-                {frequency}
-              </option>
-            ))}
-          </select>
-          {errors.frequency && <span>{handleErrors(errors.frequency)}</span>}
-        </div>
-        <div className={styles.formItem}>
-          <label htmlFor="route">Route</label>
-          <select
-            disabled={!loaded}
-            id="route"
-            {...register('route', { required: true })}
-          >
-            {routes.map((route) => (
-              <option key={route} value={route}>
-                {route}
-              </option>
-            ))}
-          </select>
-          {errors.route && <span>{handleErrors(errors.route)}</span>}
-        </div>
-        <div className={styles.formItem}>
-          <input disabled={!loaded} type="submit" />
-        </div>
-        <div className={styles.formItem}>
-          <button onClick={handleAttest} disabled={!loaded || !isDataSubmitted}>
-            Attest
-          </button>
-        </div>
-      </form>
-
-      {apiError && (
-        <div>
-          Api Errors:
-          <div>{apiError}</div>
-        </div>
-      )}
+      </div>
     </div>
   )
 }

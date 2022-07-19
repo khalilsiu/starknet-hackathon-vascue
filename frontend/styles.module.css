@@ -1,7 +1,23 @@
 .form {
     display: flex;
-    padding: 40px 50px;
+    padding: 40px 0;
     flex-wrap: wrap;
+    font-family: Raleway;
+}
+
+.form div label {
+    margin-bottom: 4px;
+}
+
+.errors{
+    font-family: Raleway;
+
+}
+
+.form div select,
+.form div input {
+    font-family: Raleway;
+
 }
 
 .formItem {
