@@ -1,6 +1,6 @@
-import { useStarknet, useStarknetInvoke } from '@starknet-react/core'
+import { useStarknet } from '@starknet-react/core'
 import axios from 'axios'
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useVascueContract } from '~/hooks/vascue'
 import { config } from 'src/config'
 import { ConnectWallet } from '~/components/ConnectWallet'
@@ -84,9 +84,6 @@ const VerifyPage = () => {
     <div>
       <ConnectWallet />
       <h2>Verify {logType} Log</h2>
-      <button onClick={onSwitch}>
-        {`Check ${logType === 'Prescription' ? 'Drug Administration' : 'Prescription'} Log`}
-      </button>
       <p>
         <span>{logType} ID: </span>
         <input onChange={(evt) => setId(evt.target.value)} />

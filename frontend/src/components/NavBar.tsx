@@ -16,7 +16,7 @@ import { useStarknet, useConnectors } from '@starknet-react/core'
 import { trimAddress } from 'utils'
 import Link from 'next/link'
 import Image from 'next/image'
-import icon from '../src/static/logo.svg'
+import icon from '../static/logo.svg'
 
 const pages = [
   { label: 'Prescription', route: '/prescription' },
@@ -166,36 +166,36 @@ export const NavBar = () => {
             >
               {account
                 ? settings.map((setting) => (
-                    <MenuItem
-                      key={setting}
-                      onClick={() => {
-                        disconnect()
-                        handleCloseUserMenu()
+                  <MenuItem
+                    key={setting}
+                    onClick={() => {
+                      disconnect()
+                      handleCloseUserMenu()
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontFamily: "'Raleway','Noto Sans HK','Noto Sans SC'",
+                        fontWeight: 'bold',
+                        color: '#25282A',
                       }}
+                      textAlign="center"
                     >
-                      <Typography
-                        sx={{
-                          fontFamily: "'Raleway','Noto Sans HK','Noto Sans SC'",
-                          fontWeight: 'bold',
-                          color: '#25282A',
-                        }}
-                        textAlign="center"
-                      >
-                        {setting}
-                      </Typography>
-                    </MenuItem>
-                  ))
+                      {setting}
+                    </Typography>
+                  </MenuItem>
+                ))
                 : available.map((connector) => (
-                    <MenuItem
-                      key={connector.id()}
-                      onClick={(e) => {
-                        connect(connector)
-                        handleCloseUserMenu()
-                      }}
-                    >
-                      {`Connect ${connector.name()}`}
-                    </MenuItem>
-                  ))}
+                  <MenuItem
+                    key={connector.id()}
+                    onClick={(e) => {
+                      connect(connector)
+                      handleCloseUserMenu()
+                    }}
+                  >
+                    {`Connect ${connector.name()}`}
+                  </MenuItem>
+                ))}
             </Menu>
           </Box>
         </Toolbar>
