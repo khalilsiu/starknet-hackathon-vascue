@@ -32,7 +32,7 @@ const Home: NextPage = () => {
             fontSize: '14px',
           }}
         >
-          zkClaim is a medical information system with on-chain verification
+          StarkMed is a medical information system with on-chain verification
           enabled by StarkNet.
           <br />
           <br />
