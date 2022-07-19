@@ -27,6 +27,7 @@ Most medical records is stored in centralised database of healthcare institutes.
 ## Demo Link 🔗
 https://starknet-hackathon.vercel.app/
 Please use our private key: `0x048619c774fafbcd0ad10f292fc4f32e5c4983bba87f40fee524b0d6475aaa84`
+OR reach out to us to add you as Doctor through discord @wtkc#0540
 
 ## Demo Video 📹
 
