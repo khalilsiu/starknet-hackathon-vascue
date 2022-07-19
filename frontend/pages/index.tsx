@@ -1,34 +1,10 @@
-import { useStarknetCall } from '@starknet-react/core'
-import { NavBar } from 'components/NavBar'
+import { NavBar } from '~/components/NavBar'
 import type { NextPage } from 'next'
 import Image from 'next/image'
-import { useMemo, useState } from 'react'
-import { toBN } from 'starknet/dist/utils/number'
-import { ConnectWallet } from '~/components/ConnectWallet'
-import { IncrementCounter } from '~/components/IncrementCounter'
-import { TransactionList } from '~/components/TransactionList'
-import { useCounterContract } from '~/hooks/counter'
 import desktopImage from '../src/static/desktop.svg'
 import Typography from '@mui/material/Typography'
 
 const Home: NextPage = () => {
-  const [watch, setWatch] = useState(true)
-  const { contract: counter } = useCounterContract()
-
-  const { data: counterResult } = useStarknetCall({
-    contract: counter,
-    method: 'counter',
-    args: [],
-    options: { watch },
-  })
-
-  const counterValue = useMemo(() => {
-    if (counterResult && counterResult.length > 0) {
-      const value = toBN(counterResult[0])
-      return value.toString(10)
-    }
-  }, [counterResult])
-
   return (
     <div>
       <NavBar />
@@ -57,9 +33,9 @@ const Home: NextPage = () => {
           }}
         >
           zkClaim is a medical information system with on-chain verification
-          enabled by StarkNet. 
-          <br/>
-          <br/>
+          enabled by StarkNet.
+          <br />
+          <br />
 
           Why? Most medical records is stored in
           centralised database controlled by healthcare institutions. These data

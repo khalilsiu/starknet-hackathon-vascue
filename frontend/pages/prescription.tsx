@@ -138,7 +138,7 @@ const PrescriptionPage: NextPage = () => {
     if (!account) {
       return
     }
-    ;(async () => {
+    ; (async () => {
       try {
         const response = await axios.request({
           data: {
