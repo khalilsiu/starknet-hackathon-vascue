@@ -5,7 +5,7 @@ import { useVascueContract } from '~/hooks/vascue'
 import { config } from 'src/config'
 import { ConnectWallet } from '~/components/ConnectWallet'
 import { AuthContext } from 'contexts/AuthContext'
-import { hashCode } from 'utils'
+import { createHexArgs, hashCode } from 'utils'
 
 const { apiUrl } = config
 
@@ -55,17 +55,18 @@ const VerifyPage = () => {
       let starknetResponse
       if (logType === 'Prescription') {
         const { caseId, doctorId, drug, frequency, quantity, route, unit } = log
-        const args = [
+        console.log(caseId, doctorId, drug, frequency, quantity, route, unit)
+        const args = createHexArgs([
           id,
-          hashCode(caseId),
+          caseId,
           doctorId,
-          hashCode(drug),
-          quantity,
-          hashCode(unit),
-          hashCode(frequency),
-          hashCode(route),
-        ]
-        starknetResponse = await vascue.verify_prescription_log(id, args, 32)
+          drug,
+          quantity.toString(),
+          unit,
+          frequency,
+          route,
+        ])
+        starknetResponse = await vascue.verify_prescription_log(id, args, args.length * 4)
       } else {
         const { prescriptionId, caseId, nurseId, drug, quantity, route, unit } = log
         const stringInputArray = [prescriptionId, caseId, nurseId, drug, quantity, route, unit]

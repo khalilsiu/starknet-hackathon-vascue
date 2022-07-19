@@ -1,6 +1,9 @@
 import type { AppProps } from 'next/app'
 import NextHead from 'next/head'
-import { getInstalledInjectedConnectors, StarknetProvider } from '@starknet-react/core'
+import {
+  getInstalledInjectedConnectors,
+  StarknetProvider,
+} from '@starknet-react/core'
 import { AuthContextProvider } from 'contexts/AuthContext'
 
 function MyApp({ Component, pageProps }: AppProps) {
